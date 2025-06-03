@@ -1,0 +1,69 @@
+---
+
+---
+
+<!-- Loading Spinner Component -->
+<section class="component-section">
+  <h2>Loading Spinner</h2>
+  <div
+    x-data="{
+    isLoading: false,
+
+        toggleLoading() {
+            this.isLoading = !this.isLoading;
+        },
+
+        startLoading() {
+            this.isLoading = true;
+        },
+
+        stopLoading() {
+            this.isLoading = false;
+        }
+    }"
+  >
+    <button class="btn" @click="toggleLoading()">
+      <span x-text="isLoading ? 'Arrêter' : 'Démarrer'"></span> le chargement
+    </button>
+
+    <div
+      x-show="isLoading"
+      class="loading-container"
+      role="status"
+      aria-live="polite"
+    >
+      <div class="spinner" aria-hidden="true"></div>
+      <span>Chargement en cours...</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Loading Spinner Styles */
+  .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007acc;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+  }
+</style>

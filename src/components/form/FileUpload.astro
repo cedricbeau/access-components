@@ -1,0 +1,499 @@
+---
+
+---
+
+<!-- Card Component -->
+<section class="component-section">
+  <h2>File Upload</h2>
+
+  <div class="file-upload-container">
+    <div
+      x-data="{
+        files: [],
+                errors: [],
+                isDragOver: false,
+                announceText: '',
+                acceptedTypes: '.jpg,.jpeg,.png,.pdf',
+                maxFileSize: 10 * 1024 * 1024, // 10MB
+
+                get dropzoneClasses() {
+                    return {
+                        'dragover': this.isDragOver,
+                        'has-files': this.files.length > 0,
+                        'has-errors': this.errors.length > 0
+                    }
+                },
+
+                handleDrop(event) {
+                    this.isDragOver = false;
+                    const droppedFiles = Array.from(event.dataTransfer.files);
+                    this.processFiles(droppedFiles);
+                },
+
+                handleFileSelect(event) {
+                    const selectedFiles = Array.from(event.target.files);
+                    this.processFiles(selectedFiles);
+                },
+
+                processFiles(newFiles) {
+                    this.errors = [];
+
+                    newFiles.forEach(file => {
+                        const isDuplicate = this.files.some(existingFile =>
+                            existingFile.name === file.name && existingFile.size === file.size
+                        );
+
+                        if (isDuplicate) {
+                            this.errors.push(`${file.name}: Fichier déjà sélectionné`);
+                            return;
+                        }
+
+                        if (this.validateFile(file)) {
+                            this.files.push({
+                                name: file.name,
+                                size: file.size,
+                                file: file,
+                                error: null,
+                                id: Date.now() + Math.random()
+                            });
+                        }
+                    });
+
+                    this.announceFileSelection();
+                },
+
+                validateFile(file) {
+                    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+                    if (!allowedTypes.includes(file.type)) {
+                        this.errors.push(`${file.name}: Type de fichier non autorisé (formats acceptés: JPG, PNG, PDF)`);
+                        return false;
+                    }
+
+                    if (file.size > this.maxFileSize) {
+                        this.errors.push(`${file.name}: Fichier trop volumineux (maximum 10 MB)`);
+                        return false;
+                    }
+
+                    if (file.size === 0) {
+                        this.errors.push(`${file.name}: Fichier vide`);
+                        return false;
+                    }
+
+                    return true;
+                },
+
+                removeFile(index) {
+                    const fileName = this.files[index].name;
+                    this.files.splice(index, 1);
+                    this.announceText = `Fichier ${fileName} supprimé. ${this.files.length} fichier(s) restant(s).`;
+
+                    if (this.files.length === 0) {
+                        this.errors = [];
+                    }
+                },
+
+                formatFileSize(bytes) {
+                    if (bytes === 0) return '0 B';
+                    const k = 1024;
+                    const sizes = ['B', 'KB', 'MB', 'GB'];
+                    const i = Math.floor(Math.log(bytes) / Math.log(k));
+                    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+                },
+
+                announceFileSelection() {
+                    setTimeout(() => {
+                        if (this.files.length === 1) {
+                            this.announceText = `1 fichier sélectionné : ${this.files[0].name}`;
+                        } else if (this.files.length > 1) {
+                            this.announceText = `${this.files.length} fichiers sélectionnés`;
+                        }
+
+                        if (this.errors.length > 0) {
+                            this.announceText += `. ${this.errors.length} erreur(s) détectée(s). Consultez les messages d'erreur.`;
+                        }
+                    }, 100);
+                },
+
+                getValidFiles() {
+                    return this.files.filter(file => !file.error).map(file => file.file);
+                },
+
+                reset() {
+                    this.files = [];
+                    this.errors = [];
+                    this.announceText = 'Composant réinitialisé';
+                    this.$refs.fileInput.value = '';
+                }
+        }"
+    >
+      <!-- Zone de drop principale -->
+      <div
+        role="button"
+        tabindex="0"
+        aria-describedby="upload-instructions"
+        :aria-label="`Zone de téléchargement. ${files.length} fichier(s) sélectionné(s)`"
+        class="upload-zone"
+        :class="dropzoneClasses"
+        @click="$refs.fileInput.click()"
+        @keydown.enter.prevent="$refs.fileInput.click()"
+        @keydown.space.prevent="$refs.fileInput.click()"
+        @dragover.prevent="isDragOver = true"
+        @dragleave.prevent="isDragOver = false"
+        @drop.prevent="handleDrop($event)"
+      >
+        <!-- Contenu de la zone de drop -->
+        <div class="upload-content">
+          <svg
+            class="upload-icon"
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+            ></path>
+          </svg>
+          <h3 class="upload-title">Glissez vos fichiers ici</h3>
+          <p class="upload-subtitle">ou cliquez pour sélectionner</p>
+        </div>
+
+        <!-- Input file caché -->
+        <input
+          type="file"
+          x-ref="fileInput"
+          multiple
+          :accept="acceptedTypes"
+          @change="handleFileSelect($event)"
+          class="sr-only"
+          aria-describedby="upload-instructions"
+        />
+      </div>
+
+      <!-- Instructions -->
+      <div id="upload-instructions" class="upload-instructions">
+        <p>
+          <strong>Formats acceptés :</strong> JPG, PNG, PDF • <strong
+            >Taille maximale :</strong
+          > 10 MB par fichier
+        </p>
+        <p>Vous pouvez sélectionner plusieurs fichiers à la fois</p>
+      </div>
+
+      <!-- Zone d'annonces pour les lecteurs d'écran -->
+      <div aria-live="polite" aria-atomic="true" class="sr-only">
+        <span x-text="announceText"></span>
+      </div>
+
+      <!-- Zone de statut -->
+      <div x-show="files.length > 0 && errors.length === 0" class="status-zone">
+        <span
+          x-text="`✓ ${files.length} fichier(s) prêt(s) pour le téléchargement`"
+        ></span>
+      </div>
+
+      <!-- Liste des fichiers sélectionnés -->
+      <div
+        x-show="files.length > 0"
+        x-transition
+        class="files-list"
+        role="region"
+        aria-label="Fichiers sélectionnés"
+      >
+        <h4>Fichiers sélectionnés (<span x-text="files.length"></span>)</h4>
+        <ul role="list">
+          <template x-for="(file, index) in files" :key="index">
+            <li class="file-item" role="listitem">
+              <div class="file-info">
+                <span class="file-name" x-text="file.name"></span>
+                <span class="file-size" x-text="formatFileSize(file.size)"
+                ></span>
+                <span x-show="file.error" class="file-error" x-text="file.error"
+                ></span>
+              </div>
+              <button
+                type="button"
+                :aria-label="`Supprimer le fichier ${file.name}`"
+                @click="removeFile(index)"
+                @keydown.delete.prevent="removeFile(index)"
+                class="file-remove"
+              >
+                <span aria-hidden="true">×</span>
+              </button>
+            </li>
+          </template>
+        </ul>
+      </div>
+
+      <!-- Messages d'erreur -->
+      <div
+        x-show="errors.length > 0"
+        x-transition
+        role="alert"
+        aria-live="assertive"
+        class="error-messages"
+      >
+        <ul>
+          <template x-for="error in errors" :key="error">
+            <li x-text="error"></li>
+          </template>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Conteneur principal */
+  .file-upload-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .demo-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #1a202c;
+  }
+
+  /* Zone de téléchargement */
+  .upload-zone {
+    border: 2px dashed #cbd5e0;
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    text-align: center;
+    background-color: #f7fafc;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .upload-zone:hover,
+  .upload-zone:focus {
+    border-color: #4299e1;
+    background-color: #ebf8ff;
+    outline: 3px solid #4299e1;
+    outline-offset: 2px;
+  }
+
+  .upload-zone.dragover {
+    border-color: #38a169;
+    background-color: #f0fff4;
+    transform: scale(1.02);
+  }
+
+  .upload-zone.has-files {
+    border-color: #38a169;
+    background-color: #f0fff4;
+  }
+
+  .upload-zone.has-errors {
+    border-color: #e53e3e;
+    background-color: #fed7d7;
+  }
+
+  /* Contenu de la zone */
+  .upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .upload-icon {
+    width: 64px;
+    height: 64px;
+    color: #718096;
+    margin-bottom: 1rem;
+  }
+
+  .upload-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0;
+  }
+
+  .upload-subtitle {
+    color: #718096;
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  /* Instructions */
+  .upload-instructions {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #ebf8ff;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #2b6cb0;
+    text-align: center;
+  }
+
+  /* Liste des fichiers */
+  .files-list {
+    margin-top: 2rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+  }
+
+  .files-list h4 {
+    background-color: #f7fafc;
+    padding: 1rem;
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    border-bottom: 1px solid #e2e8f0;
+    color: #2d3748;
+  }
+
+  .files-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Élément de fichier */
+  .file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    transition: background-color 0.2s ease;
+  }
+
+  .file-item:last-child {
+    border-bottom: none;
+  }
+
+  .file-item:hover {
+    background-color: #f7fafc;
+  }
+
+  .file-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+  }
+
+  .file-name {
+    font-weight: 500;
+    color: #2d3748;
+    font-size: 1rem;
+  }
+
+  .file-size {
+    font-size: 0.875rem;
+    color: #718096;
+  }
+
+  .file-error {
+    font-size: 0.875rem;
+    color: #e53e3e;
+    font-weight: 500;
+  }
+
+  /* Bouton de suppression */
+  .file-remove {
+    background: none;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #718096;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+  }
+
+  .file-remove:hover,
+  .file-remove:focus {
+    background-color: #fed7d7;
+    border-color: #e53e3e;
+    color: #e53e3e;
+    outline: 2px solid #4299e1;
+    outline-offset: 2px;
+  }
+
+  /* Messages d'erreur */
+  .error-messages {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #fed7d7;
+    border: 1px solid #feb2b2;
+    border-radius: 8px;
+    color: #c53030;
+  }
+
+  .error-messages ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .error-messages li {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+  }
+
+  .error-messages li:before {
+    content: "⚠";
+    position: absolute;
+    left: 0;
+    color: #e53e3e;
+  }
+
+  .error-messages li:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Zone de statut */
+  .status-zone {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f0fff4;
+    border-radius: 8px;
+    color: #38a169;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .file-upload-container {
+      margin: 0;
+      padding: 1rem;
+    }
+
+    .upload-zone {
+      padding: 2rem 1rem;
+    }
+
+    .file-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .file-remove {
+      align-self: flex-end;
+    }
+  }
+</style>

@@ -1,0 +1,82 @@
+---
+
+---
+
+<!-- Breadcrumb Component -->
+<section class="component-section">
+  <h2>Breadcrumb</h2>
+  <nav
+    x-data="{
+            items: [
+                    { label: 'Accueil', url: '/' },
+                    { label: 'Produits', url: '/produits' },
+                    { label: 'Catégorie', url: '/produits/categorie' },
+                    { label: 'Article', url: '/produits/categorie/article' }
+                ],
+
+                navigate(url) {
+                    console.log('Nav to:', url);
+                }
+            }"
+    class="breadcrumb"
+    aria-label="Fil d'Ariane"
+  >
+    <ol
+      role="list"
+      style="display: flex; align-items: center; gap: 0.5rem; list-style: none;"
+    >
+      <template x-for="(item, index) in items" :key="index">
+        <li class="breadcrumb-item">
+          <template x-if="index < items.length - 1">
+            <a
+              :href="item.url"
+              class="breadcrumb-link"
+              x-text="item.label"
+              @click.prevent="navigate(item.url)"></a>
+          </template>
+          <template x-if="index === items.length - 1">
+            <span x-text="item.label" aria-current="page"></span>
+          </template>
+          <template x-if="index < items.length - 1">
+            <span class="breadcrumb-separator" aria-hidden="true">/</span>
+          </template>
+        </li>
+      </template>
+    </ol>
+  </nav>
+</section>
+
+<style>
+  /* Breadcrumb Styles */
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+  }
+
+  .breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .breadcrumb-link {
+    color: #007acc;
+    text-decoration: none;
+    padding: 0.25rem;
+    border-radius: 2px;
+  }
+
+  .breadcrumb-link:hover,
+  .breadcrumb-link:focus {
+    text-decoration: underline;
+    outline: 2px solid #007acc;
+  }
+
+  .breadcrumb-separator {
+    color: #6c757d;
+  }
+</style>

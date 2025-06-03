@@ -1,0 +1,220 @@
+---
+
+---
+
+<!-- Sortable Table Component -->
+<section class="component-section">
+  <h2>Table Triable et Filtrable</h2>
+  <div
+    x-data="{
+        sortColumn: '',
+                sortDirection: 'asc',
+                filter: '',
+                columns: [
+                    { key: 'nom', label: 'Nom' },
+                    { key: 'poste', label: 'Poste' },
+                    { key: 'departement', label: 'Département' },
+                    { key: 'salaire', label: 'Salaire' }
+                ],
+                data: [
+                    { id: 1, nom: 'Marie Dupont', poste: 'Développeuse', departement: 'IT', salaire: '45000€' },
+                    { id: 2, nom: 'Jean Martin', poste: 'Designer', departement: 'UX', salaire: '42000€' },
+                    { id: 3, nom: 'Sophie Leroy', poste: 'Chef de projet', departement: 'Management', salaire: '55000€' },
+                    { id: 4, nom: 'Pierre Dubois', poste: 'Analyste', departement: 'IT', salaire: '40000€' },
+                    { id: 5, nom: 'Julie Moreau', poste: 'Consultante', departement: 'Business', salaire: '48000€' }
+                ],
+
+                get filteredAndSortedData() {
+                    let filtered = this.data;
+
+                    if (this.filter) {
+                        filtered = filtered.filter(row =>
+                            Object.values(row).some(value =>
+                                value.toString().toLowerCase().includes(this.filter.toLowerCase())
+                            )
+                        );
+                    }
+
+                    if (this.sortColumn) {
+                        filtered.sort((a, b) => {
+                            let aVal = a[this.sortColumn];
+                            let bVal = b[this.sortColumn];
+
+                            if (this.sortColumn === 'salaire') {
+                                aVal = parseInt(aVal.replace(/[€\s]/g, ''));
+                                bVal = parseInt(bVal.replace(/[€\s]/g, ''));
+                            }
+
+                            if (aVal < bVal) return this.sortDirection === 'asc' ? -1 : 1;
+                            if (aVal > bVal) return this.sortDirection === 'asc' ? 1 : -1;
+                            return 0;
+                        });
+                    }
+
+                    return filtered;
+                },
+
+                sort(column) {
+                    if (this.sortColumn === column) {
+                        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        this.sortColumn = column;
+                        this.sortDirection = 'asc';
+                    }
+
+                    const columnLabel = this.columns.find(col => col.key === column).label;
+                    const direction = this.sortDirection === 'asc' ? 'croissant' : 'décroissant';
+                    this.announce(`Tableau trié par ${columnLabel} en ordre ${direction}`);
+                },
+
+                getSortState(column) {
+                    if (this.sortColumn !== column) return 'none';
+                    return this.sortDirection === 'asc' ? 'ascending' : 'descending';
+                },
+
+                getSortIcon(column) {
+                    if (this.sortColumn !== column) return '↕';
+                    return this.sortDirection === 'asc' ? '↑' : '↓';
+                },
+
+                announce(message) {
+                    const announcer = document.createElement('div');
+                    announcer.setAttribute('role', 'status');
+                    announcer.setAttribute('aria-live', 'polite');
+                    announcer.className = 'sr-only';
+                    announcer.textContent = message;
+                    document.body.appendChild(announcer);
+                    setTimeout(() => document.body.removeChild(announcer), 1000);
+                }
+        }"
+  >
+    <label for="table-filter" class="sr-only"
+      >Filtrer les données du tableau</label
+    >
+    <input
+      type="text"
+      id="table-filter"
+      class="table-filter"
+      x-model="filter"
+      placeholder="Filtrer les données..."
+      aria-describedby="filter-help"
+    />
+    <div id="filter-help" class="sr-only">
+      Tapez pour filtrer les lignes du tableau
+    </div>
+
+    <div class="table-container">
+      <table
+        class="sortable-table"
+        role="table"
+        aria-label="Données des employés"
+      >
+        <thead>
+          <tr role="row">
+            <template x-for="column in columns" :key="column.key">
+              <th
+                role="columnheader"
+                :aria-sort="getSortState(column.key)"
+                tabindex="0"
+                @click="sort(column.key)"
+                @keydown.enter="sort(column.key)"
+                @keydown.space.prevent="sort(column.key)"
+              >
+                <span x-text="column.label"></span>
+                <span
+                  class="sort-indicator"
+                  :class="{ 'active': sortColumn === column.key }"
+                  x-text="getSortIcon(column.key)"
+                  aria-hidden="true"
+                >
+                </span>
+              </th>
+            </template>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="row in filteredAndSortedData" :key="row.id">
+            <tr role="row">
+              <td role="cell" x-text="row.nom"></td>
+              <td role="cell" x-text="row.poste"></td>
+              <td role="cell" x-text="row.departement"></td>
+              <td role="cell" x-text="row.salaire"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+
+    <div role="status" aria-live="polite" class="sr-only">
+      <span x-text="`${filteredAndSortedData.length} résultats affichés`"
+      ></span>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Table Styles */
+  .table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .sortable-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+  }
+
+  .sortable-table th,
+  .sortable-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+  }
+
+  .sortable-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .sortable-table th:hover {
+    background: #e9ecef;
+  }
+
+  .sortable-table th:focus {
+    outline: 2px solid #4a90e2;
+    outline-offset: -2px;
+  }
+
+  .sort-indicator {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.5;
+  }
+
+  .sort-indicator.active {
+    opacity: 1;
+    color: #4a90e2;
+  }
+
+  .table-filter {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .table-filter:focus {
+    outline: 2px solid #4a90e2;
+    border-color: #4a90e2;
+  }
+</style>

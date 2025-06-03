@@ -1,0 +1,286 @@
+---
+
+---
+
+<!-- Popover Component -->
+<section class="component-section">
+  <h2>Popover</h2>
+
+  <!-- Popover Simple -->
+  <div
+    x-data="{
+        isOpen: false,
+        contentId: $id('popover-content'),
+        headerId: $id('popover-header'),
+
+        toggle() {
+            this.isOpen ? this.close() : this.open();
+        },
+
+        open() {
+            this.isOpen = true;
+            this.$nextTick(() => {
+                const closeButton = this.$el.querySelector('.popover-close');
+                if (closeButton) {
+                    closeButton.focus();
+                }
+            });
+        },
+
+        close() {
+            this.isOpen = false;
+        }
+    }"
+    class="inline-block relative"
+    @keydown.escape="close()"
+    @click.away="close()"
+  >
+    <button
+      x-ref="trigger"
+      @click="toggle()"
+      @keydown.space.prevent="toggle()"
+      @keydown.enter.prevent="toggle()"
+      :aria-expanded="isOpen"
+      :aria-describedby="isOpen ? contentId : null"
+      class="popover-trigger"
+      type="button"
+    >
+      Informations sur le produit
+    </button>
+
+    <div
+      x-show="isOpen"
+      x-transition:enter="popover-enter"
+      x-transition:enter-end="popover-enter-to"
+      x-transition:leave="popover-leave"
+      x-transition:leave-end="popover-leave-to"
+      :id="contentId"
+      role="dialog"
+      :aria-labelledby="headerId"
+      class="popover-content"
+      x-trap="isOpen"
+    >
+      <button
+        @click="close()"
+        class="popover-close"
+        type="button"
+        aria-label="Fermer les informations"
+      >
+        ×
+      </button>
+      <div :id="headerId" class="popover-header">Spécifications Techniques</div>
+      <div class="popover-body">
+        Ce produit dispose d'une technologie avancée avec des performances
+        optimisées. Compatible avec tous les systèmes modernes et garanti 2 ans.
+        <br /><br />
+        <strong>Dimensions :</strong> 15 × 10 × 3 cm<br />
+        <strong>Poids :</strong> 250g<br />
+        <strong>Matériau :</strong> Aluminium recyclé
+      </div>
+    </div>
+  </div>
+
+  <div style="margin: 2rem 0;"></div>
+
+  <!-- Popover avec contenu complexe -->
+  <div
+    x-data="{
+        isOpen: false,
+        contentId: $id('popover-content'),
+        headerId: $id('popover-header'),
+
+        toggle() {
+            this.isOpen ? this.close() : this.open();
+        },
+
+        open() {
+            this.isOpen = true;
+            this.$nextTick(() => {
+                const closeButton = this.$el.querySelector('.popover-close');
+                if (closeButton) {
+                    closeButton.focus();
+                }
+            });
+        },
+
+        close() {
+            this.isOpen = false;
+        }
+    }"
+    class="inline-block relative"
+    @keydown.escape="close()"
+    @click.away="close()"
+  >
+    <button
+      x-ref="trigger"
+      @click="toggle()"
+      @keydown.space.prevent="toggle()"
+      @keydown.enter.prevent="toggle()"
+      :aria-expanded="isOpen"
+      :aria-describedby="isOpen ? contentId : null"
+      class="popover-trigger"
+      type="button"
+      style="background: #059669;"
+    >
+      Aide et Support
+    </button>
+
+    <div
+      x-show="isOpen"
+      x-transition:enter="popover-enter"
+      x-transition:enter-end="popover-enter-to"
+      x-transition:leave="popover-leave"
+      x-transition:leave-end="popover-leave-to"
+      :id="contentId"
+      role="dialog"
+      :aria-labelledby="headerId"
+      class="popover-content"
+      x-trap="isOpen"
+    >
+      <button
+        @click="close()"
+        class="popover-close"
+        type="button"
+        aria-label="Fermer l'aide"
+      >
+        ×
+      </button>
+      <div :id="headerId" class="popover-header">Centre d'Aide</div>
+      <div class="popover-body">
+        <p><strong>Besoin d'aide ?</strong> Nous sommes là pour vous !</p>
+        <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+          <li>📞 Téléphone : 01 23 45 67 89</li>
+          <li>✉️ Email : support@exemple.fr</li>
+          <li>💬 Chat en direct (9h-18h)</li>
+          <li>📚 Base de connaissances</li>
+        </ul>
+        <p style="margin-top: 1rem;"><em>Temps de réponse moyen : 2h</em></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Popover Styles */
+  .popover-trigger {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .popover-trigger:hover {
+    background: #1d4ed8;
+  }
+
+  .popover-trigger:focus {
+    outline: 2px solid #fbbf24;
+    outline-offset: 2px;
+  }
+
+  .popover-trigger[aria-expanded="true"] {
+    background: #1d4ed8;
+  }
+
+  .popover-content {
+    position: absolute;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    min-width: 250px;
+    max-width: 400px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .popover-content::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: 1rem;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid white;
+  }
+
+  .popover-content::after {
+    content: "";
+    position: absolute;
+    top: -9px;
+    left: 1rem;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #d1d5db;
+  }
+
+  .popover-header {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #1f2937;
+  }
+
+  .popover-body {
+    color: #6b7280;
+    line-height: 1.5;
+  }
+
+  .popover-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    color: #6b7280;
+    line-height: 1;
+  }
+
+  .popover-close:hover {
+    background: #f3f4f6;
+    color: #374151;
+  }
+
+  .popover-close:focus {
+    outline: 2px solid #fbbf24;
+    outline-offset: 1px;
+  }
+
+  /* Animation */
+  .popover-enter {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+
+  .popover-enter-to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .popover-leave {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .popover-leave-to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+
+  .popover-content {
+    transition: all 0.2s ease-out;
+  }
+</style>

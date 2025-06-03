@@ -1,0 +1,76 @@
+---
+
+---
+
+<!-- Progress Bar Component -->
+<section class="component-section">
+  <h2>Progress Bar</h2>
+  <div
+    x-data="{
+        progress: 0,
+        interval: null,
+
+        start() {
+            if (this.interval) return;
+
+            this.interval = setInterval(() => {
+                if (this.progress < 100) {
+                    this.progress += 1;
+                } else {
+                    this.stop();
+                }
+            }, 50);
+        },
+
+        stop() {
+            if (this.interval) {
+                clearInterval(this.interval);
+                this.interval = null;
+            }
+        },
+
+        reset() {
+            this.stop();
+            this.progress = 0;
+        }
+    }"
+  >
+    <div
+      class="progress-container"
+      role="progressbar"
+      :aria-valuenow="progress"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      :aria-label="'Progression: ' + progress + '%'"
+    >
+      <div class="progress-bar" :style="`width: ${progress}%`">
+        <span x-text="progress + '%'"></span>
+      </div>
+    </div>
+    <div style="margin-top: 1rem;">
+      <button class="btn" @click="start()">Démarrer</button>
+      <button class="btn" @click="reset()">Reset</button>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Progress Bar Styles */
+  .progress-container {
+    width: 100%;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 20px;
+    background-color: #007acc;
+    transition: width 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.75rem;
+  }
+</style>

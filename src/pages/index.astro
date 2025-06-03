@@ -1,11 +1,65 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from '@layouts/Layout.astro';
+import Banner from '@components/alert/Banner.astro';
+import ConfirmationDialog from '@components/alert/ConfirmationDialog.astro';
+import Message from '@components/alert/Message.astro';
+import ToastNotification from '@components/alert/ToastNotification.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Accordion from '@components/content/Accordion.astro';
+import Card from '@components/content/Card.astro';
+import Carousel from '@components/content/Carousel.astro';
+import Modal from '@components/content/Modal.astro';
+import TableSortable from '@components/content/TableSortable.astro';
+import Tabs from '@components/content/Tabs.astro';
+
+import Combobox from '@components/form/Combobox.astro';
+import Datepicker from '@components/form/Datepicker.astro';
+import FileUpload from '@components/form/FileUpload.astro';
+import FormValidation from '@components/form/FormValidation.astro';
+
+import LoaderSpinner from '@components/interface/LoaderSpinner.astro';
+import Popover from '@components/interface/Popover.astro';
+import Progressbar from '@components/interface/Progressbar.astro';
+import ToggleSwitch from '@components/interface/ToggleSwitch.astro';
+import Tooltip from '@components/interface/Tooltip.astro';
+
+import Breadcrumb from '@components/navigation/Breadcrumb.astro';
+import Dropdown from '@components/navigation/Dropdown.astro';
+import Menubar from '@components/navigation/Menubar.astro';
+import Pagination from '@components/navigation/Pagination.astro';
+import SidebarNavigationDrawer from '@components/navigation/SidebarNavigationDrawer.astro';
+import Stepper  from '@components/navigation/Stepper.astro';
+
 ---
 
 <Layout>
-	<Welcome />
+    <Banner />
+    <ConfirmationDialog />
+    <Message />
+    <ToastNotification />
+
+    <Accordion />
+    <Card />
+    <Carousel />
+    <Modal />
+    <TableSortable />
+    <Tabs />
+
+    <Combobox />
+    <Datepicker />
+    <FileUpload />
+    <FormValidation />
+
+    <LoaderSpinner />
+    <Popover />
+    <Progressbar />
+    <ToggleSwitch />
+    <Tooltip />
+
+    <Breadcrumb />
+    <Dropdown />
+    <Menubar />
+    <Pagination />
+    <SidebarNavigationDrawer />
+    <Stepper />
 </Layout>

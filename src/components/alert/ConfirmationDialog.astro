@@ -1,0 +1,215 @@
+---
+
+---
+
+<section class="component-section">
+  <!-- Section de démo -->
+  <div>
+    <h2>Dialogs de Confirmation</h2>
+    <div
+      class="demo-controls"
+      x-data="{
+        showConfirmDialog() {
+            $dispatch('open-confirm-dialog', {
+                title: 'Sauvegarder les modifications ?', 
+                message: 'Vous avez des modifications non sauvegardées. Voulez-vous les sauvegarder maintenant ?', 
+                iconType: 'warning'
+            });
+        },
+        showDeleteDialog() {
+            $dispatch('open-confirm-dialog', {
+                title: 'Supprimer cet élément ?', 
+                message: 'Cette action est irréversible. Voulez-vous vraiment supprimer cet élément ?', 
+                iconType: 'warning'
+            });
+        }
+    }"
+    >
+      <button class="btn btn-danger" @click="showDeleteDialog()">
+        Dialog Suppression
+      </button>
+      <button class="btn" @click="showConfirmDialog()">
+        Dialog Confirmation
+      </button>
+    </div>
+  </div>
+
+  <!-- Dialog de Confirmation -->
+  <div
+    x-data="{
+            isOpen: false,
+            title: '',
+            message: '',
+            iconType: 'warning',
+            dialogId: 'confirm-dialog-' + Math.random().toString(36).substr(2, 9),
+            resolvePromise: null,
+            previousFocus: null,
+
+            open(title, message, iconType = 'warning') {
+                this.title = title;
+                this.message = message;
+                this.iconType = iconType;
+                this.isOpen = true;
+                this.previousFocus = document.activeElement;
+
+                this.$nextTick(() => {
+                    this.$refs.cancelButton.focus();
+                });
+
+                return new Promise((resolve) => {
+                    this.resolvePromise = resolve;
+                });
+            },
+
+            confirm() {
+                this.close(true);
+            },
+
+            cancel() {
+                this.close(false);
+            },
+
+            close(result) {
+                this.isOpen = false;
+                if (this.resolvePromise) {
+                    this.resolvePromise(result);
+                    this.resolvePromise = null;
+                }
+
+                if (this.previousFocus) {
+                    this.previousFocus.focus();
+                    this.previousFocus = null;
+                }
+            }
+        }"
+    @open-confirm-dialog.window="open($event.detail.title, $event.detail.message, $event.detail.iconType)"
+    @keydown.escape.window="if (isOpen) cancel()"
+  >
+    <div
+      x-show="isOpen"
+      class="dialog-overlay"
+      :class="{ 'show': isOpen }"
+      role="dialog"
+      :aria-labelledby="dialogId + '-title'"
+      :aria-describedby="dialogId + '-message'"
+      aria-modal="true"
+      x-trap="isOpen"
+      @keydown.escape="cancel()"
+      @click.self="cancel()"
+      x-transition:enter="transition ease-out duration-200"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+    >
+      <div class="dialog">
+        <div class="dialog-header">
+          <div class="dialog-icon" :class="iconType">
+            <span x-show="iconType === 'warning'">⚠️</span>
+            <span x-show="iconType === 'error'">❌</span>
+            <span x-show="iconType === 'info'">ℹ️</span>
+            <span x-show="iconType === 'success'">✅</span>
+          </div>
+          <h2 :id="dialogId + '-title'" class="dialog-title" x-text="title">
+          </h2>
+        </div>
+        <p :id="dialogId + '-message'" class="dialog-message" x-text="message">
+        </p>
+        <div class="dialog-actions">
+          <button
+            class="btn"
+            @click="cancel()"
+            x-ref="cancelButton"
+          >
+            Annuler
+          </button>
+          <button
+            class="btn btn-danger"
+            @click="confirm()"
+            x-ref="confirmButton"
+          >
+            Confirmer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Styles pour les dialogs */
+  .dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .dialog-overlay.show {
+    opacity: 1;
+  }
+
+  .dialog {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    transform: scale(0.95);
+    transition: transform 0.2s ease;
+  }
+
+  .dialog-overlay.show .dialog {
+    transform: scale(1);
+  }
+
+  .dialog-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .dialog-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 12px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dialog-icon.warning {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  .dialog-icon.error {
+    background: #fecaca;
+    color: #dc2626;
+  }
+
+  .dialog-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .dialog-message {
+    margin: 0 0 24px 0;
+    color: #666;
+  }
+
+  .dialog-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+  }
+</style>

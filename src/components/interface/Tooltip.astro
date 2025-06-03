@@ -1,0 +1,137 @@
+---
+
+---
+
+<!-- Tooltip Component -->
+<section class="component-section">
+  <h2>Tooltip</h2>
+  <div style="display: flex; gap: 2rem; align-items: center;">
+    <div
+      x-data="{
+            isVisible: false,
+            position: 'top',
+            tooltipId: $id('tooltip'),
+
+            show() {
+                this.isVisible = true;
+            },
+
+            hide() {
+                this.isVisible = false;
+            }
+        }"
+      class="tooltip-container"
+    >
+      <button
+        class="btn"
+        @mouseenter="show()"
+        @mouseleave="hide()"
+        @focus="show()"
+        @blur="hide()"
+        :aria-describedby="tooltipId"
+      >
+        Survolez-moi (top)
+      </button>
+      <div
+        x-show="isVisible"
+        x-transition
+        class="tooltip top"
+        :id="tooltipId"
+        role="tooltip"
+      >Informations contextuelles
+      </div>
+    </div>
+
+    <div
+      x-data="{
+            isVisible: false,
+            position: 'bottom',
+            tooltipId: $id('tooltip'),
+
+            show() {
+                this.isVisible = true;
+            },
+
+            hide() {
+                this.isVisible = false;
+            }
+        }"
+      class="tooltip-container"
+    >
+      <button
+        class="btn"
+        @mouseenter="show()"
+        @mouseleave="hide()"
+        @focus="show()"
+        @blur="hide()"
+        :aria-describedby="tooltipId"
+      >
+        Survolez-moi (bottom)
+      </button>
+      <div
+        x-show="isVisible"
+        x-transition
+        class="tooltip bottom"
+        :id="tooltipId"
+        role="tooltip"
+      >Informations contextuelles
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Tooltip Styles */
+  .tooltip-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .tooltip {
+    position: absolute;
+    background: #333;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .tooltip.top {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 5px;
+  }
+
+  .tooltip.bottom {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 5px;
+  }
+
+  .tooltip::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 5px solid transparent;
+  }
+
+  .tooltip.top::after {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-top-color: #333;
+  }
+
+  .tooltip.bottom::after {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-bottom-color: #333;
+  }
+</style>

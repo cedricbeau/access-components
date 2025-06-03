@@ -1,0 +1,250 @@
+---
+
+---
+
+<!-- Carousel Component -->
+<section class="component-section">
+  <h2>Carousel / Slider Accessible</h2>
+  <div
+    class="carousel"
+    x-data="{
+    currentSlide: 0,
+                autoPlayInterval: null,
+                slides: [
+                    { content: 'Diapositive 1', alt: 'Première image du carrousel' },
+                    { content: 'Diapositive 2', alt: 'Deuxième image du carrousel' },
+                    { content: 'Diapositive 3', alt: 'Troisième image du carrousel' },
+                    { content: 'Diapositive 4', alt: 'Quatrième image du carrousel' }
+                ],
+
+                init() {
+                    this.$el.addEventListener('keydown', (e) => {
+                        if (e.key === 'ArrowLeft') {
+                            e.preventDefault();
+                            this.prevSlide();
+                        } else if (e.key === 'ArrowRight') {
+                            e.preventDefault();
+                            this.nextSlide();
+                        }
+                    });
+
+                    this.startAutoPlay();
+                    this.$el.addEventListener('mouseenter', () => this.stopAutoPlay());
+                    this.$el.addEventListener('mouseleave', () => this.startAutoPlay());
+                    this.$el.addEventListener('focusin', () => this.stopAutoPlay());
+                    this.$el.addEventListener('focusout', () => this.startAutoPlay());
+                },
+
+                nextSlide() {
+                    this.currentSlide = (this.currentSlide + 1) % this.slides.length;
+                    this.announceSlide();
+                },
+
+                prevSlide() {
+                    this.currentSlide = this.currentSlide === 0 ? this.slides.length - 1 : this.currentSlide - 1;
+                    this.announceSlide();
+                },
+
+                goToSlide(index) {
+                    this.currentSlide = index;
+                    this.announceSlide();
+                },
+
+                startAutoPlay() {
+                    this.autoPlayInterval = setInterval(() => {
+                        this.nextSlide();
+                    }, 5000);
+                },
+
+                stopAutoPlay() {
+                    if (this.autoPlayInterval) {
+                        clearInterval(this.autoPlayInterval);
+                        this.autoPlayInterval = null;
+                    }
+                },
+
+                announceSlide() {
+                    const announcement = `Diapositive ${this.currentSlide + 1} sur ${this.slides.length}`;
+                    this.announce(announcement);
+                },
+
+                announce(message) {
+                    const announcer = document.createElement('div');
+                    announcer.setAttribute('role', 'status');
+                    announcer.setAttribute('aria-live', 'polite');
+                    announcer.className = 'sr-only';
+                    announcer.textContent = message;
+                    document.body.appendChild(announcer);
+                    setTimeout(() => document.body.removeChild(announcer), 1000);
+                }}"
+    x-init="init()"
+    role="region"
+    aria-label="Carrousel d'images"
+  >
+    <div class="carousel-container">
+      <template x-for="(slide, index) in slides" :key="index">
+        <div
+          class="carousel-slide"
+          :class="{ 'active': index === currentSlide }"
+          role="tabpanel"
+          :aria-label="`Diapositive ${index + 1} sur ${slides.length}`"
+          :aria-hidden="index !== currentSlide"
+          x-text="slide.content"
+        >
+        </div>
+      </template>
+    </div>
+
+    <button
+      class="carousel-controls carousel-prev"
+      @click="prevSlide()"
+      aria-label="Diapositive précédente"
+      :disabled="currentSlide === 0"
+    >
+      ←
+    </button>
+
+    <button
+      class="carousel-controls carousel-next"
+      @click="nextSlide()"
+      aria-label="Diapositive suivante"
+      :disabled="currentSlide === slides.length - 1"
+    >
+      →
+    </button>
+
+    <div
+      class="carousel-indicators"
+      role="tablist"
+      aria-label="Indicateurs de diapositives"
+    >
+      <template x-for="(slide, index) in slides" :key="index">
+        <button
+          class="carousel-indicator"
+          :class="{ 'active': index === currentSlide }"
+          @click="goToSlide(index)"
+          role="tab"
+          :aria-selected="index === currentSlide"
+          :aria-label="`Aller à la diapositive ${index + 1}`"
+        >
+        </button>
+      </template>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Carousel Styles */
+  .carousel {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .carousel-container {
+    position: relative;
+    height: 300px;
+    overflow: hidden;
+  }
+
+  .carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .carousel-slide.active {
+    opacity: 1;
+  }
+
+  .carousel-slide:nth-child(1) {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  .carousel-slide:nth-child(2) {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+  .carousel-slide:nth-child(3) {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  }
+  .carousel-slide:nth-child(4) {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  }
+
+  .carousel-controls {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    cursor: pointer;
+    font-size: 18px;
+    border-radius: 4px;
+    transition: background 0.3s;
+  }
+
+  .carousel-controls:hover,
+  .carousel-controls:focus {
+    background: rgba(0, 0, 0, 0.9);
+    outline: 2px solid #4a90e2;
+    outline-offset: 2px;
+  }
+
+  .carousel-prev {
+    left: 10px;
+  }
+
+  .carousel-next {
+    right: 10px;
+  }
+
+  .carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-block: 15px;
+  }
+
+  .carousel-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    background: #ccc;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .carousel-indicator.active {
+    background: #4a90e2;
+  }
+
+  .carousel-indicator:hover,
+  .carousel-indicator:focus {
+    background: #666;
+    outline: 2px solid #4a90e2;
+    outline-offset: 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .carousel-controls {
+      padding: 10px 15px;
+      font-size: 16px;
+    }
+  }
+</style>

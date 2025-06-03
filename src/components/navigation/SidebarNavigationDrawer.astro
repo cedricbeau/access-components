@@ -1,0 +1,298 @@
+---
+
+---
+
+<!-- Composant Sidebar -->
+<section class="component-section">
+  <h2>Sidebar Navigation Drawer</h2>
+
+  <div
+    x-data="{
+            isOpen: false,
+                activeItem: 'accueil',
+                focusableElements: [],
+                previouslyFocusedElement: null,
+
+                openSidebar() {
+                    this.previouslyFocusedElement = document.activeElement;
+                    this.isOpen = true;
+
+                    this.$nextTick(() => {
+                        setTimeout(() => {
+                            const firstFocusable = this.$el.querySelector('.sidebar-close');
+                            if (firstFocusable) {
+                                firstFocusable.focus();
+                            }
+                        }, 100);
+                    });
+                },
+
+                closeSidebar() {
+                    this.isOpen = false;
+
+                    if (this.previouslyFocusedElement) {
+                        this.previouslyFocusedElement.focus();
+                    }
+                },
+
+                setActiveItem(item) {
+                    this.activeItem = item;
+
+                    const announcement = document.createElement('div');
+                    announcement.setAttribute('aria-live', 'polite');
+                    announcement.className = 'sr-only';
+                    announcement.textContent = `${item} sélectionné`;
+                    document.body.appendChild(announcement);
+
+                    setTimeout(() => {
+                        document.body.removeChild(announcement);
+                    }, 1000);
+
+                    if (window.innerWidth <= 768) {
+                        setTimeout(() => this.closeSidebar(), 300);
+                    }
+                }
+            }"
+    @keydown.escape="closeSidebar()"
+  >
+    <!-- Bouton d'ouverture -->
+    <button
+      @click="openSidebar()"
+      class="sidebar-toggle"
+      type="button"
+      aria-expanded="false"
+      :aria-expanded="isOpen.toString()"
+      aria-controls="main-sidebar"
+      aria-label="Ouvrir le menu de navigation"
+    >
+      ☰ Ouvrir le menu
+    </button>
+
+    <!-- Overlay -->
+    <div
+      x-show="isOpen"
+      @click="closeSidebar()"
+      class="sidebar-overlay"
+      :class="{'active': isOpen}"
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+      aria-hidden="true"
+    >
+    </div>
+
+    <!-- Sidebar -->
+    <aside
+      x-show="isOpen"
+      id="main-sidebar"
+      class="sidebar"
+      :class="{'active': isOpen}"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="sidebar-title-header"
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="transform -translate-x-full"
+      x-transition:enter-end="transform translate-x-0"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="transform translate-x-0"
+      x-transition:leave-end="transform -translate-x-full"
+      x-trap="isOpen"
+    >
+      <!-- En-tête du sidebar -->
+      <header class="sidebar-header">
+        <h3 id="sidebar-title-header">Menu Navigation</h3>
+        <button
+          @click="closeSidebar()"
+          class="sidebar-close"
+          type="button"
+          aria-label="Fermer le menu de navigation"
+        >
+          ×
+        </button>
+      </header>
+
+      <!-- Navigation -->
+      <nav role="navigation" aria-label="Menu principal">
+        <ul class="sidebar-nav" role="list">
+          <li role="none">
+            <a
+              href="#"
+              role="menuitem"
+              :class="{'active': activeItem === 'accueil'}"
+              @click="setActiveItem('accueil')"
+              @keydown.enter="setActiveItem('accueil')"
+              @keydown.space.prevent="setActiveItem('accueil')"
+            >
+              🏠 Accueil
+            </a>
+          </li>
+          <li role="none">
+            <a
+              href="#"
+              role="menuitem"
+              :class="{'active': activeItem === 'produits'}"
+              @click="setActiveItem('produits')"
+              @keydown.enter="setActiveItem('produits')"
+              @keydown.space.prevent="setActiveItem('produits')"
+            >
+              📦 Produits
+            </a>
+          </li>
+          <li role="none">
+            <a
+              href="#"
+              role="menuitem"
+              :class="{'active': activeItem === 'services'}"
+              @click="setActiveItem('services')"
+              @keydown.enter="setActiveItem('services')"
+              @keydown.space.prevent="setActiveItem('services')"
+            >
+              🛠️ Services
+            </a>
+          </li>
+          <li role="none">
+            <a
+              href="#"
+              role="menuitem"
+              :class="{'active': activeItem === 'contact'}"
+              @click="setActiveItem('contact')"
+              @keydown.enter="setActiveItem('contact')"
+              @keydown.space.prevent="setActiveItem('contact')"
+            >
+              📞 Contact
+            </a>
+          </li>
+          <li role="none">
+            <a
+              href="#"
+              role="menuitem"
+              :class="{'active': activeItem === 'aide'}"
+              @click="setActiveItem('aide')"
+              @keydown.enter="setActiveItem('aide')"
+              @keydown.space.prevent="setActiveItem('aide')"
+            >
+              ❓ Aide
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+  </div>
+</section>
+
+<style>
+  /* Styles pour le Sidebar */
+  .sidebar-container {
+    position: relative;
+  }
+
+  .sidebar-toggle {
+    padding: 10px 15px;
+    background: #007acc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .sidebar-toggle:hover {
+    background: #005a99;
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 300px;
+    height: 100vh;
+    background: white;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 999;
+    overflow-y: auto;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .sidebar-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+  }
+
+  .sidebar-close:hover {
+    background: #f0f0f0;
+  }
+
+  .sidebar-nav {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .sidebar-nav li {
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .sidebar-nav a {
+    display: block;
+    padding: 15px 20px;
+    color: #333;
+    text-decoration: none;
+    transition: background 0.2s ease;
+  }
+
+  .sidebar-nav a:hover,
+  .sidebar-nav a:focus {
+    background: #f8f9fa;
+  }
+
+  .sidebar-nav a.active {
+    background: #e3f2fd;
+    color: #1976d2;
+    font-weight: 500;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 280px;
+    }
+  }
+</style>

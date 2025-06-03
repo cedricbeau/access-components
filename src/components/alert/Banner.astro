@@ -1,0 +1,235 @@
+---
+
+---
+<section class="component-section">
+<!-- Section de démonstration -->
+<div>
+  <h2>Banners d'Information</h2>
+  <div
+    class="demo-controls"
+    x-data="{
+            showInfoBanner() {
+                $dispatch('show-banner', {
+                    type: 'info',
+                    title: 'Nouvelle fonctionnalité',
+                    message: 'Découvrez notre nouvelle interface utilisateur.'
+                });
+            },
+            showSuccessBanner() {
+                $dispatch('show-banner', {
+                    type: 'success',
+                    title: 'Mise à jour réussie',
+                    message: 'Le système a été mis à jour avec succès.'
+                });
+            },
+            showWarningBanner() {
+                $dispatch('show-banner', {
+                    type: 'warning',
+                    title: 'Maintenance programmée',
+                    message: 'Une maintenance est prévue demain de 2h à 4h.'
+                });
+            },
+            showErrorBanner() {
+                $dispatch('show-banner', {
+                    type: 'error',
+                    title: 'Service indisponible',
+                    message: 'Le service de paiement est temporairement indisponible.'
+                });
+            }
+        }"
+  >
+    <button class="btn" @click="showInfoBanner()">
+      Banner Info
+    </button>
+    <button class="btn" @click="showSuccessBanner()">
+      Banner Succès
+    </button>
+    <button class="btn " @click="showWarningBanner()">
+      Banner Avertissement
+    </button>
+    <button class="btn" @click="showErrorBanner()">
+      Banner Erreur
+    </button>
+  </div>
+</div>
+
+<!-- Container pour les banners (position fixe) -->
+<div
+  class="banner-container"
+  x-data="{
+            banners: [],
+            nextId: 1,
+
+            showBanner(type, title, message, persistent = false) {
+                const id = this.nextId++;
+                const banner = {
+                    id,
+                    type,
+                    title,
+                    message,
+                    visible: true,
+                    persistent
+                };
+
+                this.banners.push(banner);
+
+                if (!persistent) {
+                    setTimeout(() => {
+                        this.hideBanner(id);
+                    }, 10000);
+                }
+
+                return id;
+            },
+
+            hideBanner(id) {
+                const bannerIndex = this.banners.findIndex(b => b.id === id);
+                if (bannerIndex !== -1) {
+                    this.banners[bannerIndex].visible = false;
+
+                    setTimeout(() => {
+                        this.banners = this.banners.filter(b => b.id !== id);
+                    }, 300);
+                }
+            },
+
+            hideAllBanners() {
+                this.banners.forEach(banner => {
+                    banner.visible = false;
+                });
+                setTimeout(() => {
+                    this.banners = [];
+                }, 300);
+            }
+         }"
+  @show-banner.window="showBanner($event.detail.type, $event.detail.title, $event.detail.message)"
+  @keydown.escape.window="hideAllBanners()"
+>
+  <template x-for="banner in banners" :key="banner.id">
+    <div
+      :class="['banner', banner.type]"
+      role="banner"
+      :aria-labelledby="'banner-title-' + banner.id"
+      :aria-describedby="'banner-message-' + banner.id"
+      x-show="banner.visible"
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="transform translate-x-full opacity-0"
+      x-transition:enter-end="transform translate-x-0 opacity-100"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="transform translate-x-0 opacity-100"
+      x-transition:leave-end="transform translate-x-full opacity-0"
+    >
+      <div class="banner-icon" aria-hidden="true">
+        <span x-show="banner.type === 'info'">ℹ️</span>
+        <span x-show="banner.type === 'success'">✅</span>
+        <span x-show="banner.type === 'warning'">⚠️</span>
+        <span x-show="banner.type === 'error'">❌</span>
+      </div>
+      <div class="banner-content">
+        <h3
+          :id="'banner-title-' + banner.id"
+          class="banner-title"
+          x-text="banner.title"
+        >
+        </h3>
+        <p
+          :id="'banner-message-' + banner.id"
+          class="banner-message"
+          x-text="banner.message"
+        >
+        </p>
+      </div>
+      <button
+        class="banner-close"
+        @click="hideBanner(banner.id)"
+        :aria-label="'Fermer le banner ' + banner.title"
+        type="button"
+      >
+        ×
+      </button>
+    </div>
+  </template>
+</div>
+</section>
+
+<style>
+  /* Styles pour les banners */
+  .banner-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 400px;
+  }
+
+  .banner {
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .banner.info {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e40af;
+  }
+
+  .banner.success {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+  }
+
+  .banner.warning {
+    background: #fffbeb;
+    border: 1px solid #fed7aa;
+    color: #c2410c;
+  }
+
+  .banner.error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+  }
+
+  .banner-icon {
+    font-size: 20px;
+    margin-top: 2px;
+  }
+
+  .banner-content {
+    flex: 1;
+  }
+
+  .banner-title {
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    font-size: 14px;
+  }
+
+  .banner-message {
+    margin: 0;
+    font-size: 13px;
+  }
+
+  .banner-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    opacity: 0.7;
+    line-height: 1;
+  }
+
+  .banner-close:hover,
+  .banner-close:focus {
+    opacity: 1;
+    outline: 2px solid currentColor;
+  }
+</style>

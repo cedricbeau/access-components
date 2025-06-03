@@ -1,0 +1,481 @@
+---
+
+---
+
+<!-- Date Picker Component -->
+<section class="component-section">
+  <h2>Date Picker</h2>
+
+  <div
+    x-data="{
+        isOpen: false,
+                selectedDate: null,
+                currentDate: new Date(),
+                focusedDate: new Date(),
+
+                get calendarDays() {
+                    const year = this.currentDate.getFullYear();
+                    const month = this.currentDate.getMonth();
+                    const firstDay = new Date(year, month, 1);
+                    const lastDay = new Date(year, month + 1, 0);
+                    const startDate = new Date(firstDay);
+                    startDate.setDate(startDate.getDate() - startDate.getDay());
+                    const endDate = new Date(lastDay);
+                    endDate.setDate(endDate.getDate() + (6 - endDate.getDay()));
+
+                    const days = [];
+                    const current = new Date(startDate);
+
+                    while (current <= endDate) {
+                        days.push({
+                            date: new Date(current),
+                            isCurrentMonth: current.getMonth() === month
+                        });
+                        current.setDate(current.getDate() + 1);
+                    }
+
+                    return days;
+                },
+
+                openCalendar() {
+                    this.isOpen = true;
+                    this.focusedDate = this.selectedDate || new Date();
+                    this.currentDate = new Date(this.focusedDate.getFullYear(), this.focusedDate.getMonth(), 1);
+                },
+
+                closeCalendar() {
+                    this.isOpen = false;
+                },
+
+                previousMonth() {
+                    this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() - 1, 1);
+                },
+
+                nextMonth() {
+                    this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1);
+                },
+
+                selectDate(date) {
+                    this.selectedDate = new Date(date);
+                    this.closeCalendar();
+                },
+
+                isSelected(date) {
+                    if (!this.selectedDate) return false;
+                    return this.formatDate(date) === this.formatDate(this.selectedDate);
+                },
+
+                isToday(date) {
+                    const today = new Date();
+                    return this.formatDate(date) === this.formatDate(today);
+                },
+
+                formatDate(date) {
+                    if (!date) return '';
+                    return date.toLocaleDateString('fr-FR');
+                },
+
+                formatMonthYear(date) {
+                    return date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+                },
+
+                formatDateForAriaLabel(date) {
+                    return date.toLocaleDateString('fr-FR', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                },
+
+                getFocusTabIndex(date, index) {
+                    if (this.selectedDate && this.isSelected(date)) return 0;
+                    if (!this.selectedDate && this.isToday(date)) return 0;
+                    if (!this.selectedDate && !this.calendarDays.some(day => this.isToday(day.date)) && index === 0) return 0;
+                    return -1;
+                },
+
+                handleInputKeydown(event) {
+                    switch (event.key) {
+                        case 'Enter':
+                        case ' ':
+                            event.preventDefault();
+                            this.openCalendar();
+                            break;
+                        case 'Escape':
+                            this.closeCalendar();
+                            break;
+                    }
+                },
+
+                handleNavKeydown(event, direction) {
+                    switch (event.key) {
+                        case 'Enter':
+                        case ' ':
+                            event.preventDefault();
+                            if (direction === 'prev') {
+                                this.previousMonth();
+                            } else {
+                                this.nextMonth();
+                            }
+                            break;
+                    }
+                },
+
+                handleDayKeydown(event, date, index) {
+                    switch (event.key) {
+                        case 'Enter':
+                        case ' ':
+                            event.preventDefault();
+                            this.selectDate(date);
+                            break;
+                        case 'Escape':
+                            this.closeCalendar();
+                            break;
+                        case 'ArrowRight':
+                            event.preventDefault();
+                            this.focusNextDay(index);
+                            break;
+                        case 'ArrowLeft':
+                            event.preventDefault();
+                            this.focusPreviousDay(index);
+                            break;
+                        case 'ArrowDown':
+                            event.preventDefault();
+                            this.focusNextWeek(index);
+                            break;
+                        case 'ArrowUp':
+                            event.preventDefault();
+                            this.focusPreviousWeek(index);
+                            break;
+                        case 'Home':
+                            event.preventDefault();
+                            this.focusFirstDayOfWeek(index);
+                            break;
+                        case 'End':
+                            event.preventDefault();
+                            this.focusLastDayOfWeek(index);
+                            break;
+                    }
+                },
+
+                focusNextDay(currentIndex) {
+                    const nextIndex = Math.min(currentIndex + 1, this.calendarDays.length - 1);
+                    this.focusDay(nextIndex);
+                },
+
+                focusPreviousDay(currentIndex) {
+                    const prevIndex = Math.max(currentIndex - 1, 0);
+                    this.focusDay(prevIndex);
+                },
+
+                focusNextWeek(currentIndex) {
+                    const nextIndex = Math.min(currentIndex + 7, this.calendarDays.length - 1);
+                    this.focusDay(nextIndex);
+                },
+
+                focusPreviousWeek(currentIndex) {
+                    const prevIndex = Math.max(currentIndex - 7, 0);
+                    this.focusDay(prevIndex);
+                },
+
+                focusFirstDayOfWeek(currentIndex) {
+                    const weekStart = Math.floor(currentIndex / 7) * 7;
+                    this.focusDay(weekStart);
+                },
+
+                focusLastDayOfWeek(currentIndex) {
+                    const weekStart = Math.floor(currentIndex / 7) * 7;
+                    const weekEnd = Math.min(weekStart + 6, this.calendarDays.length - 1);
+                    this.focusDay(weekEnd);
+                },
+
+                focusDay(index) {
+                    this.$nextTick(() => {
+                        const buttons = this.$el.querySelectorAll('.calendar-day');
+                        if (buttons[index]) {
+                            buttons[index].focus();
+                        }
+                    });
+                }
+        }"
+    class="form-group"
+  >
+    <label for="date-input" class="form-label"> Sélectionnez une date </label>
+
+    <div class="datepicker-container">
+      <input
+        id="date-input"
+        type="text"
+        class="datepicker-input"
+        :value="formatDate(selectedDate)"
+        @focus="openCalendar"
+        @keydown="handleInputKeydown"
+        placeholder="jj/mm/aaaa"
+        aria-describedby="date-instructions"
+        readonly
+      />
+
+      <div
+        x-show="isOpen"
+        x-transition
+        class="datepicker-calendar"
+        role="dialog"
+        aria-label="Calendrier de sélection de date"
+        aria-modal="false"
+      >
+        <div class="calendar-header">
+          <button
+            type="button"
+            class="calendar-nav-btn"
+            @click="previousMonth"
+            @keydown="handleNavKeydown($event, 'prev')"
+            aria-label="Mois précédent"
+          >
+            ‹
+          </button>
+
+          <div
+            class="calendar-month-year"
+            aria-live="polite"
+            x-text="formatMonthYear(currentDate)"
+          >
+          </div>
+
+          <button
+            type="button"
+            class="calendar-nav-btn"
+            @click="nextMonth"
+            @keydown="handleNavKeydown($event, 'next')"
+            aria-label="Mois suivant"
+          >
+            ›
+          </button>
+        </div>
+
+        <div class="calendar-grid" role="grid" aria-label="Calendrier">
+          <!-- Headers des jours -->
+          <div
+            class="calendar-day-header"
+            role="columnheader"
+            aria-label="Dimanche"
+          >
+            Dim
+          </div>
+          <div
+            class="calendar-day-header"
+            role="columnheader"
+            aria-label="Lundi"
+          >
+            Lun
+          </div>
+          <div
+            class="calendar-day-header"
+            role="columnheader"
+            aria-label="Mardi"
+          >
+            Mar
+          </div>
+          <div
+            class="calendar-day-header"
+            role="columnheader"
+            aria-label="Mercredi"
+          >
+            Mer
+          </div>
+          <div
+            class="calendar-day-header"
+            role="columnheader"
+            aria-label="Jeudi"
+          >
+            Jeu
+          </div>
+          <div
+            class="calendar-day-header"
+            role="columnheader"
+            aria-label="Vendredi"
+          >
+            Ven
+          </div>
+          <div
+            class="calendar-day-header"
+            role="columnheader"
+            aria-label="Samedi"
+          >
+            Sam
+          </div>
+
+          <!-- Jours du calendrier -->
+          <template
+            x-for="(day, index) in calendarDays"
+            :key="day.date.getTime()"
+          >
+            <button
+              type="button"
+              class="calendar-day"
+              role="gridcell"
+              :class="{
+                                    'other-month': !day.isCurrentMonth,
+                                    'selected': isSelected(day.date),
+                                    'today': isToday(day.date)
+                                }"
+              :aria-label="formatDateForAriaLabel(day.date)"
+              :aria-selected="isSelected(day.date)"
+              :tabindex="getFocusTabIndex(day.date, index)"
+              @click="selectDate(day.date)"
+              @keydown="handleDayKeydown($event, day.date, index)"
+              x-text="day.date.getDate()"></button>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <div id="date-instructions" class="instructions">
+      Cliquez pour ouvrir le calendrier. Utilisez les flèches pour naviguer,
+      Entrée/Espace pour sélectionner, Échap pour fermer.
+    </div>
+
+    <div x-show="selectedDate" x-transition class="instructions">
+      Date sélectionnée: <strong x-text="formatDate(selectedDate)"></strong>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Date Picker Styles */
+  .datepicker-container {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .datepicker-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+
+  .datepicker-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  .datepicker-calendar {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 2px solid #d1d5db;
+    border-radius: 6px;
+    padding: 1rem;
+    z-index: 10;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-width: 280px;
+  }
+
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .calendar-nav-btn {
+    background: none;
+    border: 2px solid #d1d5db;
+    border-radius: 4px;
+    padding: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+  }
+
+  .calendar-nav-btn:hover {
+    background-color: #f3f4f6;
+  }
+
+  .calendar-nav-btn:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  }
+
+  .calendar-month-year {
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+
+  .calendar-day-header {
+    padding: 0.5rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+
+  .calendar-day {
+    padding: 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    transition: all 0.2s;
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .calendar-day:hover {
+    background-color: #f3f4f6;
+  }
+
+  .calendar-day:focus {
+    outline: none;
+    border-color: #2563eb;
+    background-color: #eff6ff;
+  }
+
+  .calendar-day.other-month {
+    color: #9ca3af;
+  }
+
+  .calendar-day.selected {
+    background-color: #2563eb;
+    color: white;
+  }
+
+  .calendar-day.today {
+    background-color: #fef3c7;
+    font-weight: 600;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .instructions {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+</style>

@@ -1,0 +1,245 @@
+---
+
+---
+
+<!-- Combobox/Autocomplete Component -->
+<section class="component-section">
+  <h2>Combobox/Autocomplete</h2>
+
+  <div
+    x-data="{
+        query: '',
+                isOpen: false,
+                activeIndex: -1,
+                selectedOption: null,
+                options: [
+                    { id: 1, label: 'Pomme' },
+                    { id: 2, label: 'Banane' },
+                    { id: 3, label: 'Orange' },
+                    { id: 4, label: 'Fraise' },
+                    { id: 5, label: 'Raisin' },
+                    { id: 6, label: 'Ananas' },
+                    { id: 7, label: 'Mangue' },
+                    { id: 8, label: 'Kiwi' },
+                    { id: 9, label: 'Pêche' },
+                    { id: 10, label: 'Abricot' }
+                ],
+
+                get filteredOptions() {
+                    if (!this.query) return this.options;
+                    return this.options.filter(option =>
+                        option.label.toLowerCase().includes(this.query.toLowerCase())
+                    );
+                },
+
+                get activeOptionId() {
+                    if (this.activeIndex >= 0 && this.filteredOptions[this.activeIndex]) {
+                        return 'option-' + this.filteredOptions[this.activeIndex].id;
+                    }
+                    return null;
+                },
+
+                handleInput() {
+                    this.isOpen = true;
+                    this.activeIndex = -1;
+                },
+
+                handleFocus() {
+                    this.isOpen = true;
+                },
+
+                handleBlur() {
+                    setTimeout(() => {
+                        this.isOpen = false;
+                        this.activeIndex = -1;
+                    }, 150);
+                },
+
+                handleKeydown(event) {
+                    switch (event.key) {
+                        case 'ArrowDown':
+                            event.preventDefault();
+                            this.isOpen = true;
+                            this.activeIndex = Math.min(this.activeIndex + 1, this.filteredOptions.length - 1);
+                            break;
+                        case 'ArrowUp':
+                            event.preventDefault();
+                            if (this.activeIndex > 0) {
+                                this.activeIndex--;
+                            }
+                            break;
+                        case 'Enter':
+                            event.preventDefault();
+                            if (this.activeIndex >= 0 && this.filteredOptions[this.activeIndex]) {
+                                this.selectOption(this.filteredOptions[this.activeIndex]);
+                            }
+                            break;
+                        case 'Escape':
+                            this.isOpen = false;
+                            this.activeIndex = -1;
+                            break;
+                        case 'Tab':
+                            this.isOpen = false;
+                            this.activeIndex = -1;
+                            break;
+                    }
+                },
+
+                selectOption(option) {
+                    this.selectedOption = option;
+                    this.query = option.label;
+                    this.isOpen = false;
+                    this.activeIndex = -1;
+                },
+
+                setActiveIndex(index) {
+                    this.activeIndex = index;
+                }
+        }"
+    class="form-group"
+  >
+    <label for="fruit-combobox" class="form-label"> Choisissez un fruit </label>
+
+    <div class="combobox-container">
+      <input
+        id="fruit-combobox"
+        type="text"
+        class="combobox-input"
+        role="combobox"
+        :aria-expanded="isOpen"
+        :aria-activedescendant="activeOptionId"
+        aria-haspopup="listbox"
+        aria-autocomplete="list"
+        aria-describedby="fruit-instructions"
+        placeholder="Tapez pour rechercher..."
+        x-model="query"
+        @input="handleInput"
+        @keydown="handleKeydown"
+        @focus="handleFocus"
+        @blur="handleBlur"
+      />
+
+      <ul
+        x-show="isOpen"
+        x-transition
+        class="combobox-listbox"
+        role="listbox"
+        id="fruit-listbox"
+        aria-label="Suggestions de fruits"
+      >
+        <template x-for="(option, index) in filteredOptions" :key="option.id">
+          <li
+            class="combobox-option"
+            role="option"
+            :id="'option-' + option.id"
+            :aria-selected="activeIndex === index"
+            :class="{ 'bg-blue-100': activeIndex === index }"
+            @click="selectOption(option)"
+            @mouseenter="setActiveIndex(index)"
+            tabindex="-1"
+            x-text="option.label"
+          >
+          </li>
+        </template>
+
+        <li
+          x-show="filteredOptions.length === 0 && query.length > 0"
+          class="combobox-option"
+          role="option"
+          aria-selected="false"
+        >
+          Aucun résultat trouvé
+        </li>
+      </ul>
+    </div>
+
+    <div id="fruit-instructions" class="instructions">
+      Utilisez les flèches haut/bas pour naviguer, Entrée pour sélectionner,
+      Échap pour fermer.
+    </div>
+
+    <div x-show="selectedOption" x-transition class="instructions">
+      Sélectionné: <strong x-text="selectedOption?.label"></strong>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Combobox Styles */
+  .combobox-container {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .combobox-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+
+  .combobox-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  .combobox-listbox {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #d1d5db;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .combobox-option {
+    padding: 0.75rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f3f4f6;
+    transition: background-color 0.2s;
+  }
+
+  .combobox-option:last-child {
+    border-bottom: none;
+  }
+
+  .combobox-option:hover,
+  .combobox-option[aria-selected="true"] {
+    background-color: #eff6ff;
+  }
+
+  .combobox-option:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: -2px;
+    background-color: #eff6ff;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .instructions {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+</style>
