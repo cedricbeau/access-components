@@ -94,12 +94,6 @@ Each component is tested with:
 
 This project is licensed under the [MIT](LICENSE) license.
 
-## 👤 Author
-
-**Cédric Beau**
-- GitHub: [@cedricbeau](https://github.com/cedricbeau)
-- Email: [your-email@example.com]
-
 ## 🙏 Acknowledgments
 
 - [Astro](https://astro.build/) for the static site generation framework
