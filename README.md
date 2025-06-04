@@ -61,7 +61,6 @@ All commands are run from the root of the project, from a terminal:
 - **Notification Toast** - Temporary notifications with voice announcements
 - **Confirmation Dialog** - Accessible modal dialog boxes
 - **Banner** - Persistent information messages at the top of the page
-- **Message** - Information messages with priority levels
 
 ## ♿ Accessibility Features
 
