@@ -8,29 +8,7 @@
 
   <!-- Popover Simple -->
   <div
-    x-data="{
-        isOpen: false,
-        contentId: $id('popover-content'),
-        headerId: $id('popover-header'),
-
-        toggle() {
-            this.isOpen ? this.close() : this.open();
-        },
-
-        open() {
-            this.isOpen = true;
-            this.$nextTick(() => {
-                const closeButton = this.$el.querySelector('.popover-close');
-                if (closeButton) {
-                    closeButton.focus();
-                }
-            });
-        },
-
-        close() {
-            this.isOpen = false;
-        }
-    }"
+    x-data="popover()"
     class="inline-block relative"
     @keydown.escape="close()"
     @click.away="close()"
@@ -84,29 +62,7 @@
 
   <!-- Popover avec contenu complexe -->
   <div
-    x-data="{
-        isOpen: false,
-        contentId: $id('popover-content'),
-        headerId: $id('popover-header'),
-
-        toggle() {
-            this.isOpen ? this.close() : this.open();
-        },
-
-        open() {
-            this.isOpen = true;
-            this.$nextTick(() => {
-                const closeButton = this.$el.querySelector('.popover-close');
-                if (closeButton) {
-                    closeButton.focus();
-                }
-            });
-        },
-
-        close() {
-            this.isOpen = false;
-        }
-    }"
+    x-data="popover()"
     class="inline-block relative"
     @keydown.escape="close()"
     @click.away="close()"
@@ -159,6 +115,36 @@
     </div>
   </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("popover", () => {
+    return {
+      isOpen: false,
+      contentId: `$id("popover-content")`,
+      headerId: `$id("popover-header")`,
+
+      toggle() {
+        this.isOpen ? this.close() : this.open();
+      },
+
+      open() {
+        this.isOpen = true;
+        this.$nextTick(() => {
+          const closeButton = this.$el.querySelector(".popover-close");
+          if (closeButton) {
+            closeButton.focus();
+          }
+        });
+      },
+
+      close() {
+        this.isOpen = false;
+      },
+    };
+  });
+</script>
 
 <style>
   /* Popover Styles */

@@ -7,125 +7,7 @@
   <h2>File Upload</h2>
 
   <div class="file-upload-container">
-    <div
-      x-data="{
-        files: [],
-                errors: [],
-                isDragOver: false,
-                announceText: '',
-                acceptedTypes: '.jpg,.jpeg,.png,.pdf',
-                maxFileSize: 10 * 1024 * 1024, // 10MB
-
-                get dropzoneClasses() {
-                    return {
-                        'dragover': this.isDragOver,
-                        'has-files': this.files.length > 0,
-                        'has-errors': this.errors.length > 0
-                    }
-                },
-
-                handleDrop(event) {
-                    this.isDragOver = false;
-                    const droppedFiles = Array.from(event.dataTransfer.files);
-                    this.processFiles(droppedFiles);
-                },
-
-                handleFileSelect(event) {
-                    const selectedFiles = Array.from(event.target.files);
-                    this.processFiles(selectedFiles);
-                },
-
-                processFiles(newFiles) {
-                    this.errors = [];
-
-                    newFiles.forEach(file => {
-                        const isDuplicate = this.files.some(existingFile =>
-                            existingFile.name === file.name && existingFile.size === file.size
-                        );
-
-                        if (isDuplicate) {
-                            this.errors.push(`${file.name}: Fichier déjà sélectionné`);
-                            return;
-                        }
-
-                        if (this.validateFile(file)) {
-                            this.files.push({
-                                name: file.name,
-                                size: file.size,
-                                file: file,
-                                error: null,
-                                id: Date.now() + Math.random()
-                            });
-                        }
-                    });
-
-                    this.announceFileSelection();
-                },
-
-                validateFile(file) {
-                    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
-                    if (!allowedTypes.includes(file.type)) {
-                        this.errors.push(`${file.name}: Type de fichier non autorisé (formats acceptés: JPG, PNG, PDF)`);
-                        return false;
-                    }
-
-                    if (file.size > this.maxFileSize) {
-                        this.errors.push(`${file.name}: Fichier trop volumineux (maximum 10 MB)`);
-                        return false;
-                    }
-
-                    if (file.size === 0) {
-                        this.errors.push(`${file.name}: Fichier vide`);
-                        return false;
-                    }
-
-                    return true;
-                },
-
-                removeFile(index) {
-                    const fileName = this.files[index].name;
-                    this.files.splice(index, 1);
-                    this.announceText = `Fichier ${fileName} supprimé. ${this.files.length} fichier(s) restant(s).`;
-
-                    if (this.files.length === 0) {
-                        this.errors = [];
-                    }
-                },
-
-                formatFileSize(bytes) {
-                    if (bytes === 0) return '0 B';
-                    const k = 1024;
-                    const sizes = ['B', 'KB', 'MB', 'GB'];
-                    const i = Math.floor(Math.log(bytes) / Math.log(k));
-                    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-                },
-
-                announceFileSelection() {
-                    setTimeout(() => {
-                        if (this.files.length === 1) {
-                            this.announceText = `1 fichier sélectionné : ${this.files[0].name}`;
-                        } else if (this.files.length > 1) {
-                            this.announceText = `${this.files.length} fichiers sélectionnés`;
-                        }
-
-                        if (this.errors.length > 0) {
-                            this.announceText += `. ${this.errors.length} erreur(s) détectée(s). Consultez les messages d'erreur.`;
-                        }
-                    }, 100);
-                },
-
-                getValidFiles() {
-                    return this.files.filter(file => !file.error).map(file => file.file);
-                },
-
-                reset() {
-                    this.files = [];
-                    this.errors = [];
-                    this.announceText = 'Composant réinitialisé';
-                    this.$refs.fileInput.value = '';
-                }
-        }"
-    >
+    <div x-data="fileUpload()">
       <!-- Zone de drop principale -->
       <div
         role="button"
@@ -245,6 +127,142 @@
     </div>
   </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("fileUpload", () => {
+    return {
+      files: [],
+      errors: [],
+      isDragOver: false,
+      announceText: "",
+      acceptedTypes: ".jpg,.jpeg,.png,.pdf",
+      maxFileSize: 10 * 1024 * 1024, // 10MB
+
+      get dropzoneClasses() {
+        return {
+          dragover: this.isDragOver,
+          "has-files": this.files.length > 0,
+          "has-errors": this.errors.length > 0,
+        };
+      },
+
+      handleDrop(event) {
+        this.isDragOver = false;
+        const droppedFiles = Array.from(event.dataTransfer.files);
+        this.processFiles(droppedFiles);
+      },
+
+      handleFileSelect(event) {
+        const selectedFiles = Array.from(event.target.files);
+        this.processFiles(selectedFiles);
+      },
+
+      processFiles(newFiles) {
+        this.errors = [];
+
+        newFiles.forEach((file) => {
+          const isDuplicate = this.files.some(
+            (existingFile) =>
+              existingFile.name === file.name && existingFile.size === file.size
+          );
+
+          if (isDuplicate) {
+            this.errors.push(`${file.name}: Fichier déjà sélectionné`);
+            return;
+          }
+
+          if (this.validateFile(file)) {
+            this.files.push({
+              name: file.name,
+              size: file.size,
+              file: file,
+              error: null,
+              id: Date.now() + Math.random(),
+            });
+          }
+        });
+
+        this.announceFileSelection();
+      },
+
+      validateFile(file) {
+        const allowedTypes = [
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+          "application/pdf",
+        ];
+        if (!allowedTypes.includes(file.type)) {
+          this.errors.push(
+            `${file.name}: Type de fichier non autorisé (formats acceptés: JPG, PNG, PDF)`
+          );
+          return false;
+        }
+
+        if (file.size > this.maxFileSize) {
+          this.errors.push(
+            `${file.name}: Fichier trop volumineux (maximum 10 MB)`
+          );
+          return false;
+        }
+
+        if (file.size === 0) {
+          this.errors.push(`${file.name}: Fichier vide`);
+          return false;
+        }
+
+        return true;
+      },
+
+      removeFile(index) {
+        const fileName = this.files[index].name;
+        this.files.splice(index, 1);
+        this.announceText = `Fichier ${fileName} supprimé. ${this.files.length} fichier(s) restant(s).`;
+
+        if (this.files.length === 0) {
+          this.errors = [];
+        }
+      },
+
+      formatFileSize(bytes) {
+        if (bytes === 0) return "0 B";
+        const k = 1024;
+        const sizes = ["B", "KB", "MB", "GB"];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+      },
+
+      announceFileSelection() {
+        setTimeout(() => {
+          if (this.files.length === 1) {
+            this.announceText = `1 fichier sélectionné : ${this.files[0].name}`;
+          } else if (this.files.length > 1) {
+            this.announceText = `${this.files.length} fichiers sélectionnés`;
+          }
+
+          if (this.errors.length > 0) {
+            this.announceText += `. ${this.errors.length} erreur(s) détectée(s). Consultez les messages d'erreur.`;
+          }
+        }, 100);
+      },
+
+      getValidFiles() {
+        return this.files
+          .filter((file) => !file.error)
+          .map((file) => file.file);
+      },
+
+      reset() {
+        this.files = [];
+        this.errors = [];
+        this.announceText = "Composant réinitialisé";
+        this.$refs.fileInput.value = "";
+      },
+    };
+  });
+</script>
 
 <style>
   /* Conteneur principal */

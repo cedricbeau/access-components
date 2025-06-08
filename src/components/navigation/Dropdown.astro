@@ -5,66 +5,7 @@
 <!-- Dropdown Component -->
 <section class="component-section">
   <h2>Dropdown</h2>
-  <div
-    x-data="{
-            isOpen: false,
-                selectedItem: null,
-                focusedIndex: -1,
-                selectedId: null,
-                items: [
-                    { id: 1, label: 'Option 1' },
-                    { id: 2, label: 'Option 2' },
-                    { id: 3, label: 'Option 3' },
-                    { id: 4, label: 'Option 4' }
-                ],
-
-                toggle() {
-                    this.isOpen ? this.close() : this.open();
-                },
-
-                open() {
-                    this.isOpen = true;
-                    this.focusedIndex = this.selectedItem ? this.items.findIndex(item => item.id === this.selectedItem.id) : 0;
-                    this.updateSelectedId();
-                },
-
-                close() {
-                    this.isOpen = false;
-                    this.focusedIndex = -1;
-                    this.selectedId = null;
-                },
-
-                select(item) {
-                    this.selectedItem = item;
-                    this.close();
-                },
-
-                selectCurrent() {
-                    if (this.focusedIndex >= 0) {
-                        this.select(this.items[this.focusedIndex]);
-                    }
-                },
-
-                nextItem() {
-                    if (this.focusedIndex < this.items.length - 1) {
-                        this.focusedIndex++;
-                        this.updateSelectedId();
-                    }
-                },
-
-                prevItem() {
-                    if (this.focusedIndex > 0) {
-                        this.focusedIndex--;
-                        this.updateSelectedId();
-                    }
-                },
-
-                updateSelectedId() {
-                    this.selectedId = this.focusedIndex >= 0 ? `option-${this.items[this.focusedIndex].id}` : null;
-                }
-            }"
-    class="dropdown"
-  >
+  <div x-data="dropdown()" class="dropdown">
     <button
       class="dropdown-button"
       @click="toggle()"
@@ -106,6 +47,75 @@
     </div>
   </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("dropdown", () => {
+    return {
+      isOpen: false,
+      selectedItem: null,
+      focusedIndex: -1,
+      selectedId: null,
+      items: [
+        { id: 1, label: "Option 1" },
+        { id: 2, label: "Option 2" },
+        { id: 3, label: "Option 3" },
+        { id: 4, label: "Option 4" },
+      ],
+
+      toggle() {
+        this.isOpen ? this.close() : this.open();
+      },
+
+      open() {
+        this.isOpen = true;
+        this.focusedIndex = this.selectedItem
+          ? this.items.findIndex((item) => item.id === this.selectedItem.id)
+          : 0;
+        this.updateSelectedId();
+      },
+
+      close() {
+        this.isOpen = false;
+        this.focusedIndex = -1;
+        this.selectedId = null;
+      },
+
+      select(item) {
+        this.selectedItem = item;
+        this.close();
+      },
+
+      selectCurrent() {
+        if (this.focusedIndex >= 0) {
+          this.select(this.items[this.focusedIndex]);
+        }
+      },
+
+      nextItem() {
+        if (this.focusedIndex < this.items.length - 1) {
+          this.focusedIndex++;
+          this.updateSelectedId();
+        }
+      },
+
+      prevItem() {
+        if (this.focusedIndex > 0) {
+          this.focusedIndex--;
+          this.updateSelectedId();
+        }
+      },
+
+      updateSelectedId() {
+        this.selectedId =
+          this.focusedIndex >= 0
+            ? `option-${this.items[this.focusedIndex].id}`
+            : null;
+      },
+    };
+  });
+</script>
 
 <style>
   /* Dropdown Styles */

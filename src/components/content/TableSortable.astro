@@ -5,89 +5,7 @@
 <!-- Sortable Table Component -->
 <section class="component-section">
   <h2>Table Triable et Filtrable</h2>
-  <div
-    x-data="{
-        sortColumn: '',
-                sortDirection: 'asc',
-                filter: '',
-                columns: [
-                    { key: 'nom', label: 'Nom' },
-                    { key: 'poste', label: 'Poste' },
-                    { key: 'departement', label: 'Département' },
-                    { key: 'salaire', label: 'Salaire' }
-                ],
-                data: [
-                    { id: 1, nom: 'Marie Dupont', poste: 'Développeuse', departement: 'IT', salaire: '45000€' },
-                    { id: 2, nom: 'Jean Martin', poste: 'Designer', departement: 'UX', salaire: '42000€' },
-                    { id: 3, nom: 'Sophie Leroy', poste: 'Chef de projet', departement: 'Management', salaire: '55000€' },
-                    { id: 4, nom: 'Pierre Dubois', poste: 'Analyste', departement: 'IT', salaire: '40000€' },
-                    { id: 5, nom: 'Julie Moreau', poste: 'Consultante', departement: 'Business', salaire: '48000€' }
-                ],
-
-                get filteredAndSortedData() {
-                    let filtered = this.data;
-
-                    if (this.filter) {
-                        filtered = filtered.filter(row =>
-                            Object.values(row).some(value =>
-                                value.toString().toLowerCase().includes(this.filter.toLowerCase())
-                            )
-                        );
-                    }
-
-                    if (this.sortColumn) {
-                        filtered.sort((a, b) => {
-                            let aVal = a[this.sortColumn];
-                            let bVal = b[this.sortColumn];
-
-                            if (this.sortColumn === 'salaire') {
-                                aVal = parseInt(aVal.replace(/[€\s]/g, ''));
-                                bVal = parseInt(bVal.replace(/[€\s]/g, ''));
-                            }
-
-                            if (aVal < bVal) return this.sortDirection === 'asc' ? -1 : 1;
-                            if (aVal > bVal) return this.sortDirection === 'asc' ? 1 : -1;
-                            return 0;
-                        });
-                    }
-
-                    return filtered;
-                },
-
-                sort(column) {
-                    if (this.sortColumn === column) {
-                        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-                    } else {
-                        this.sortColumn = column;
-                        this.sortDirection = 'asc';
-                    }
-
-                    const columnLabel = this.columns.find(col => col.key === column).label;
-                    const direction = this.sortDirection === 'asc' ? 'croissant' : 'décroissant';
-                    this.announce(`Tableau trié par ${columnLabel} en ordre ${direction}`);
-                },
-
-                getSortState(column) {
-                    if (this.sortColumn !== column) return 'none';
-                    return this.sortDirection === 'asc' ? 'ascending' : 'descending';
-                },
-
-                getSortIcon(column) {
-                    if (this.sortColumn !== column) return '↕';
-                    return this.sortDirection === 'asc' ? '↑' : '↓';
-                },
-
-                announce(message) {
-                    const announcer = document.createElement('div');
-                    announcer.setAttribute('role', 'status');
-                    announcer.setAttribute('aria-live', 'polite');
-                    announcer.className = 'sr-only';
-                    announcer.textContent = message;
-                    document.body.appendChild(announcer);
-                    setTimeout(() => document.body.removeChild(announcer), 1000);
-                }
-        }"
-  >
+  <div x-data="tableSortable()">
     <label for="table-filter" class="sr-only"
       >Filtrer les données du tableau</label
     >
@@ -151,6 +69,127 @@
     </div>
   </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("tableSortable", () => {
+    return {
+      sortColumn: "",
+      sortDirection: "asc",
+      filter: "",
+      columns: [
+        { key: "nom", label: "Nom" },
+        { key: "poste", label: "Poste" },
+        { key: "departement", label: "Département" },
+        { key: "salaire", label: "Salaire" },
+      ],
+      data: [
+        {
+          id: 1,
+          nom: "Marie Dupont",
+          poste: "Développeuse",
+          departement: "IT",
+          salaire: "45000€",
+        },
+        {
+          id: 2,
+          nom: "Jean Martin",
+          poste: "Designer",
+          departement: "UX",
+          salaire: "42000€",
+        },
+        {
+          id: 3,
+          nom: "Sophie Leroy",
+          poste: "Chef de projet",
+          departement: "Management",
+          salaire: "55000€",
+        },
+        {
+          id: 4,
+          nom: "Pierre Dubois",
+          poste: "Analyste",
+          departement: "IT",
+          salaire: "40000€",
+        },
+        {
+          id: 5,
+          nom: "Julie Moreau",
+          poste: "Consultante",
+          departement: "Business",
+          salaire: "48000€",
+        },
+      ],
+
+      get filteredAndSortedData() {
+        let filtered = this.data;
+
+        if (this.filter) {
+          filtered = filtered.filter((row) =>
+            Object.values(row).some((value) =>
+              value.toString().toLowerCase().includes(this.filter.toLowerCase())
+            )
+          );
+        }
+
+        if (this.sortColumn) {
+          filtered.sort((a, b) => {
+            let aVal = a[this.sortColumn];
+            let bVal = b[this.sortColumn];
+
+            if (this.sortColumn === "salaire") {
+              aVal = parseInt(aVal.replace(/[€\s]/g, ""));
+              bVal = parseInt(bVal.replace(/[€\s]/g, ""));
+            }
+
+            if (aVal < bVal) return this.sortDirection === "asc" ? -1 : 1;
+            if (aVal > bVal) return this.sortDirection === "asc" ? 1 : -1;
+            return 0;
+          });
+        }
+
+        return filtered;
+      },
+
+      sort(column) {
+        if (this.sortColumn === column) {
+          this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
+        } else {
+          this.sortColumn = column;
+          this.sortDirection = "asc";
+        }
+
+        const columnLabel = this.columns.find(
+          (col) => col.key === column
+        ).label;
+        const direction =
+          this.sortDirection === "asc" ? "croissant" : "décroissant";
+        this.announce(`Tableau trié par ${columnLabel} en ordre ${direction}`);
+      },
+
+      getSortState(column) {
+        if (this.sortColumn !== column) return "none";
+        return this.sortDirection === "asc" ? "ascending" : "descending";
+      },
+
+      getSortIcon(column) {
+        if (this.sortColumn !== column) return "↕";
+        return this.sortDirection === "asc" ? "↑" : "↓";
+      },
+
+      announce(message) {
+        const announcer = document.createElement("div");
+        announcer.setAttribute("role", "status");
+        announcer.setAttribute("aria-live", "polite");
+        announcer.className = "sr-only";
+        announcer.textContent = message;
+        document.body.appendChild(announcer);
+        setTimeout(() => document.body.removeChild(announcer), 1000);
+      },
+    };
+  });
+</script>
 
 <style>
   /* Table Styles */

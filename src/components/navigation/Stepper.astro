@@ -5,35 +5,7 @@
 <!-- Stepper Component -->
 <div class="component-section">
   <h2>Stepper</h2>
-  <div
-    x-data="{
-            currentStep: 0,
-                steps: [
-                    { label: 'Étape 1', content: 'Contenu de la première étape. Remplissez les informations de base.' },
-                    { label: 'Étape 2', content: 'Contenu de la deuxième étape. Configurez les options avancées.' },
-                    { label: 'Étape 3', content: 'Contenu de la troisième étape. Vérifiez et validez vos choix.' },
-                    { label: 'Étape 4', content: 'Étape finale. Confirmez et finalisez le processus.' }
-                ],
-
-                nextStep() {
-                    if (this.currentStep < this.steps.length - 1) {
-                        this.currentStep++;
-                    }
-                },
-
-                prevStep() {
-                    if (this.currentStep > 0) {
-                        this.currentStep--;
-                    }
-                },
-
-                goToStep(index) {
-                    if (index >= 0 && index < this.steps.length) {
-                        this.currentStep = index;
-                    }
-                }
-            }"
-  >
+  <div x-data="stepper()">
     <div
       class="stepper"
       role="progressbar"
@@ -78,6 +50,55 @@
     </div>
   </div>
 </div>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("stepper", () => {
+    return {
+      currentStep: 0,
+      steps: [
+        {
+          label: "Étape 1",
+          content:
+            "Contenu de la première étape. Remplissez les informations de base.",
+        },
+        {
+          label: "Étape 2",
+          content:
+            "Contenu de la deuxième étape. Configurez les options avancées.",
+        },
+        {
+          label: "Étape 3",
+          content:
+            "Contenu de la troisième étape. Vérifiez et validez vos choix.",
+        },
+        {
+          label: "Étape 4",
+          content: "Étape finale. Confirmez et finalisez le processus.",
+        },
+      ],
+
+      nextStep() {
+        if (this.currentStep < this.steps.length - 1) {
+          this.currentStep++;
+        }
+      },
+
+      prevStep() {
+        if (this.currentStep > 0) {
+          this.currentStep--;
+        }
+      },
+
+      goToStep(index) {
+        if (index >= 0 && index < this.steps.length) {
+          this.currentStep = index;
+        }
+      },
+    };
+  });
+</script>
 
 <style>
   /* Stepper Styles */

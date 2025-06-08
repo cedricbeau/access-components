@@ -6,201 +6,7 @@
 <section class="component-section">
   <h2>Date Picker</h2>
 
-  <div
-    x-data="{
-        isOpen: false,
-                selectedDate: null,
-                currentDate: new Date(),
-                focusedDate: new Date(),
-
-                get calendarDays() {
-                    const year = this.currentDate.getFullYear();
-                    const month = this.currentDate.getMonth();
-                    const firstDay = new Date(year, month, 1);
-                    const lastDay = new Date(year, month + 1, 0);
-                    const startDate = new Date(firstDay);
-                    startDate.setDate(startDate.getDate() - startDate.getDay());
-                    const endDate = new Date(lastDay);
-                    endDate.setDate(endDate.getDate() + (6 - endDate.getDay()));
-
-                    const days = [];
-                    const current = new Date(startDate);
-
-                    while (current <= endDate) {
-                        days.push({
-                            date: new Date(current),
-                            isCurrentMonth: current.getMonth() === month
-                        });
-                        current.setDate(current.getDate() + 1);
-                    }
-
-                    return days;
-                },
-
-                openCalendar() {
-                    this.isOpen = true;
-                    this.focusedDate = this.selectedDate || new Date();
-                    this.currentDate = new Date(this.focusedDate.getFullYear(), this.focusedDate.getMonth(), 1);
-                },
-
-                closeCalendar() {
-                    this.isOpen = false;
-                },
-
-                previousMonth() {
-                    this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() - 1, 1);
-                },
-
-                nextMonth() {
-                    this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1);
-                },
-
-                selectDate(date) {
-                    this.selectedDate = new Date(date);
-                    this.closeCalendar();
-                },
-
-                isSelected(date) {
-                    if (!this.selectedDate) return false;
-                    return this.formatDate(date) === this.formatDate(this.selectedDate);
-                },
-
-                isToday(date) {
-                    const today = new Date();
-                    return this.formatDate(date) === this.formatDate(today);
-                },
-
-                formatDate(date) {
-                    if (!date) return '';
-                    return date.toLocaleDateString('fr-FR');
-                },
-
-                formatMonthYear(date) {
-                    return date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
-                },
-
-                formatDateForAriaLabel(date) {
-                    return date.toLocaleDateString('fr-FR', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    });
-                },
-
-                getFocusTabIndex(date, index) {
-                    if (this.selectedDate && this.isSelected(date)) return 0;
-                    if (!this.selectedDate && this.isToday(date)) return 0;
-                    if (!this.selectedDate && !this.calendarDays.some(day => this.isToday(day.date)) && index === 0) return 0;
-                    return -1;
-                },
-
-                handleInputKeydown(event) {
-                    switch (event.key) {
-                        case 'Enter':
-                        case ' ':
-                            event.preventDefault();
-                            this.openCalendar();
-                            break;
-                        case 'Escape':
-                            this.closeCalendar();
-                            break;
-                    }
-                },
-
-                handleNavKeydown(event, direction) {
-                    switch (event.key) {
-                        case 'Enter':
-                        case ' ':
-                            event.preventDefault();
-                            if (direction === 'prev') {
-                                this.previousMonth();
-                            } else {
-                                this.nextMonth();
-                            }
-                            break;
-                    }
-                },
-
-                handleDayKeydown(event, date, index) {
-                    switch (event.key) {
-                        case 'Enter':
-                        case ' ':
-                            event.preventDefault();
-                            this.selectDate(date);
-                            break;
-                        case 'Escape':
-                            this.closeCalendar();
-                            break;
-                        case 'ArrowRight':
-                            event.preventDefault();
-                            this.focusNextDay(index);
-                            break;
-                        case 'ArrowLeft':
-                            event.preventDefault();
-                            this.focusPreviousDay(index);
-                            break;
-                        case 'ArrowDown':
-                            event.preventDefault();
-                            this.focusNextWeek(index);
-                            break;
-                        case 'ArrowUp':
-                            event.preventDefault();
-                            this.focusPreviousWeek(index);
-                            break;
-                        case 'Home':
-                            event.preventDefault();
-                            this.focusFirstDayOfWeek(index);
-                            break;
-                        case 'End':
-                            event.preventDefault();
-                            this.focusLastDayOfWeek(index);
-                            break;
-                    }
-                },
-
-                focusNextDay(currentIndex) {
-                    const nextIndex = Math.min(currentIndex + 1, this.calendarDays.length - 1);
-                    this.focusDay(nextIndex);
-                },
-
-                focusPreviousDay(currentIndex) {
-                    const prevIndex = Math.max(currentIndex - 1, 0);
-                    this.focusDay(prevIndex);
-                },
-
-                focusNextWeek(currentIndex) {
-                    const nextIndex = Math.min(currentIndex + 7, this.calendarDays.length - 1);
-                    this.focusDay(nextIndex);
-                },
-
-                focusPreviousWeek(currentIndex) {
-                    const prevIndex = Math.max(currentIndex - 7, 0);
-                    this.focusDay(prevIndex);
-                },
-
-                focusFirstDayOfWeek(currentIndex) {
-                    const weekStart = Math.floor(currentIndex / 7) * 7;
-                    this.focusDay(weekStart);
-                },
-
-                focusLastDayOfWeek(currentIndex) {
-                    const weekStart = Math.floor(currentIndex / 7) * 7;
-                    const weekEnd = Math.min(weekStart + 6, this.calendarDays.length - 1);
-                    this.focusDay(weekEnd);
-                },
-
-                focusDay(index) {
-                    this.$nextTick(() => {
-                        const buttons = this.$el.querySelectorAll('.calendar-day');
-                        if (buttons[index]) {
-                            buttons[index].focus();
-                        }
-                    });
-                }
-        }"
-    class="form-group"
-  >
+  <div x-data="datepicker()" class="form-group">
     <label for="date-input" class="form-label"> Sélectionnez une date </label>
 
     <div class="datepicker-container">
@@ -340,6 +146,231 @@
     </div>
   </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("datepicker", () => {
+    return {
+      isOpen: false,
+      selectedDate: null,
+      currentDate: new Date(),
+      focusedDate: new Date(),
+
+      get calendarDays() {
+        const year = this.currentDate.getFullYear();
+        const month = this.currentDate.getMonth();
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const startDate = new Date(firstDay);
+        startDate.setDate(startDate.getDate() - startDate.getDay());
+        const endDate = new Date(lastDay);
+        endDate.setDate(endDate.getDate() + (6 - endDate.getDay()));
+
+        const days = [];
+        const current = new Date(startDate);
+
+        while (current <= endDate) {
+          days.push({
+            date: new Date(current),
+            isCurrentMonth: current.getMonth() === month,
+          });
+          current.setDate(current.getDate() + 1);
+        }
+
+        return days;
+      },
+
+      openCalendar() {
+        this.isOpen = true;
+        this.focusedDate = this.selectedDate || new Date();
+        this.currentDate = new Date(
+          this.focusedDate.getFullYear(),
+          this.focusedDate.getMonth(),
+          1
+        );
+      },
+
+      closeCalendar() {
+        this.isOpen = false;
+      },
+
+      previousMonth() {
+        this.currentDate = new Date(
+          this.currentDate.getFullYear(),
+          this.currentDate.getMonth() - 1,
+          1
+        );
+      },
+
+      nextMonth() {
+        this.currentDate = new Date(
+          this.currentDate.getFullYear(),
+          this.currentDate.getMonth() + 1,
+          1
+        );
+      },
+
+      selectDate(date) {
+        this.selectedDate = new Date(date);
+        this.closeCalendar();
+      },
+
+      isSelected(date) {
+        if (!this.selectedDate) return false;
+        return this.formatDate(date) === this.formatDate(this.selectedDate);
+      },
+
+      isToday(date) {
+        const today = new Date();
+        return this.formatDate(date) === this.formatDate(today);
+      },
+
+      formatDate(date) {
+        if (!date) return "";
+        return date.toLocaleDateString("fr-FR");
+      },
+
+      formatMonthYear(date) {
+        return date.toLocaleDateString("fr-FR", {
+          month: "long",
+          year: "numeric",
+        });
+      },
+
+      formatDateForAriaLabel(date) {
+        return date.toLocaleDateString("fr-FR", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+      },
+
+      getFocusTabIndex(date, index) {
+        if (this.selectedDate && this.isSelected(date)) return 0;
+        if (!this.selectedDate && this.isToday(date)) return 0;
+        if (
+          !this.selectedDate &&
+          !this.calendarDays.some((day) => this.isToday(day.date)) &&
+          index === 0
+        )
+          return 0;
+        return -1;
+      },
+
+      handleInputKeydown(event) {
+        switch (event.key) {
+          case "Enter":
+          case " ":
+            event.preventDefault();
+            this.openCalendar();
+            break;
+          case "Escape":
+            this.closeCalendar();
+            break;
+        }
+      },
+
+      handleNavKeydown(event, direction) {
+        switch (event.key) {
+          case "Enter":
+          case " ":
+            event.preventDefault();
+            if (direction === "prev") {
+              this.previousMonth();
+            } else {
+              this.nextMonth();
+            }
+            break;
+        }
+      },
+
+      handleDayKeydown(event, date, index) {
+        switch (event.key) {
+          case "Enter":
+          case " ":
+            event.preventDefault();
+            this.selectDate(date);
+            break;
+          case "Escape":
+            this.closeCalendar();
+            break;
+          case "ArrowRight":
+            event.preventDefault();
+            this.focusNextDay(index);
+            break;
+          case "ArrowLeft":
+            event.preventDefault();
+            this.focusPreviousDay(index);
+            break;
+          case "ArrowDown":
+            event.preventDefault();
+            this.focusNextWeek(index);
+            break;
+          case "ArrowUp":
+            event.preventDefault();
+            this.focusPreviousWeek(index);
+            break;
+          case "Home":
+            event.preventDefault();
+            this.focusFirstDayOfWeek(index);
+            break;
+          case "End":
+            event.preventDefault();
+            this.focusLastDayOfWeek(index);
+            break;
+        }
+      },
+
+      focusNextDay(currentIndex) {
+        const nextIndex = Math.min(
+          currentIndex + 1,
+          this.calendarDays.length - 1
+        );
+        this.focusDay(nextIndex);
+      },
+
+      focusPreviousDay(currentIndex) {
+        const prevIndex = Math.max(currentIndex - 1, 0);
+        this.focusDay(prevIndex);
+      },
+
+      focusNextWeek(currentIndex) {
+        const nextIndex = Math.min(
+          currentIndex + 7,
+          this.calendarDays.length - 1
+        );
+        this.focusDay(nextIndex);
+      },
+
+      focusPreviousWeek(currentIndex) {
+        const prevIndex = Math.max(currentIndex - 7, 0);
+        this.focusDay(prevIndex);
+      },
+
+      focusFirstDayOfWeek(currentIndex) {
+        const weekStart = Math.floor(currentIndex / 7) * 7;
+        this.focusDay(weekStart);
+      },
+
+      focusLastDayOfWeek(currentIndex) {
+        const weekStart = Math.floor(currentIndex / 7) * 7;
+        const weekEnd = Math.min(weekStart + 6, this.calendarDays.length - 1);
+        this.focusDay(weekEnd);
+      },
+
+      focusDay(index) {
+        this.$nextTick(() => {
+          const buttons = this.$el.querySelectorAll(".calendar-day");
+          if (buttons[index]) {
+            buttons[index].focus();
+          }
+        });
+      },
+    };
+  });
+</script>
 
 <style>
   /* Date Picker Styles */

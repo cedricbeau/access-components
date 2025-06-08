@@ -7,76 +7,7 @@
   <h2>Carousel / Slider Accessible</h2>
   <div
     class="carousel"
-    x-data="{
-    currentSlide: 0,
-                autoPlayInterval: null,
-                slides: [
-                    { content: 'Diapositive 1', alt: 'Première image du carrousel' },
-                    { content: 'Diapositive 2', alt: 'Deuxième image du carrousel' },
-                    { content: 'Diapositive 3', alt: 'Troisième image du carrousel' },
-                    { content: 'Diapositive 4', alt: 'Quatrième image du carrousel' }
-                ],
-
-                init() {
-                    this.$el.addEventListener('keydown', (e) => {
-                        if (e.key === 'ArrowLeft') {
-                            e.preventDefault();
-                            this.prevSlide();
-                        } else if (e.key === 'ArrowRight') {
-                            e.preventDefault();
-                            this.nextSlide();
-                        }
-                    });
-
-                    this.startAutoPlay();
-                    this.$el.addEventListener('mouseenter', () => this.stopAutoPlay());
-                    this.$el.addEventListener('mouseleave', () => this.startAutoPlay());
-                    this.$el.addEventListener('focusin', () => this.stopAutoPlay());
-                    this.$el.addEventListener('focusout', () => this.startAutoPlay());
-                },
-
-                nextSlide() {
-                    this.currentSlide = (this.currentSlide + 1) % this.slides.length;
-                    this.announceSlide();
-                },
-
-                prevSlide() {
-                    this.currentSlide = this.currentSlide === 0 ? this.slides.length - 1 : this.currentSlide - 1;
-                    this.announceSlide();
-                },
-
-                goToSlide(index) {
-                    this.currentSlide = index;
-                    this.announceSlide();
-                },
-
-                startAutoPlay() {
-                    this.autoPlayInterval = setInterval(() => {
-                        this.nextSlide();
-                    }, 5000);
-                },
-
-                stopAutoPlay() {
-                    if (this.autoPlayInterval) {
-                        clearInterval(this.autoPlayInterval);
-                        this.autoPlayInterval = null;
-                    }
-                },
-
-                announceSlide() {
-                    const announcement = `Diapositive ${this.currentSlide + 1} sur ${this.slides.length}`;
-                    this.announce(announcement);
-                },
-
-                announce(message) {
-                    const announcer = document.createElement('div');
-                    announcer.setAttribute('role', 'status');
-                    announcer.setAttribute('aria-live', 'polite');
-                    announcer.className = 'sr-only';
-                    announcer.textContent = message;
-                    document.body.appendChild(announcer);
-                    setTimeout(() => document.body.removeChild(announcer), 1000);
-                }}"
+    x-data="carousel()"
     x-init="init()"
     role="region"
     aria-label="Carrousel d'images"
@@ -132,6 +63,87 @@
     </div>
   </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("carousel", () => {
+    return {
+      currentSlide: 0,
+      autoPlayInterval: null,
+      slides: [
+        { content: "Diapositive 1", alt: "Première image du carrousel" },
+        { content: "Diapositive 2", alt: "Deuxième image du carrousel" },
+        { content: "Diapositive 3", alt: "Troisième image du carrousel" },
+        { content: "Diapositive 4", alt: "Quatrième image du carrousel" },
+      ],
+
+      init() {
+        this.$el.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowLeft") {
+            e.preventDefault();
+            this.prevSlide();
+          } else if (e.key === "ArrowRight") {
+            e.preventDefault();
+            this.nextSlide();
+          }
+        });
+
+        this.startAutoPlay();
+        this.$el.addEventListener("mouseenter", () => this.stopAutoPlay());
+        this.$el.addEventListener("mouseleave", () => this.startAutoPlay());
+        this.$el.addEventListener("focusin", () => this.stopAutoPlay());
+        this.$el.addEventListener("focusout", () => this.startAutoPlay());
+      },
+
+      nextSlide() {
+        this.currentSlide = (this.currentSlide + 1) % this.slides.length;
+        this.announceSlide();
+      },
+
+      prevSlide() {
+        this.currentSlide =
+          this.currentSlide === 0
+            ? this.slides.length - 1
+            : this.currentSlide - 1;
+        this.announceSlide();
+      },
+
+      goToSlide(index) {
+        this.currentSlide = index;
+        this.announceSlide();
+      },
+
+      startAutoPlay() {
+        this.autoPlayInterval = setInterval(() => {
+          this.nextSlide();
+        }, 5000);
+      },
+
+      stopAutoPlay() {
+        if (this.autoPlayInterval) {
+          clearInterval(this.autoPlayInterval);
+          this.autoPlayInterval = null;
+        }
+      },
+
+      announceSlide() {
+        const announcement = `Diapositive ${this.currentSlide + 1} sur ${this.slides.length}`;
+        this.announce(announcement);
+      },
+
+      announce(message) {
+        const announcer = document.createElement("div");
+        announcer.setAttribute("role", "status");
+        announcer.setAttribute("aria-live", "polite");
+        announcer.className = "sr-only";
+        announcer.textContent = message;
+        document.body.appendChild(announcer);
+        setTimeout(() => document.body.removeChild(announcer), 1000);
+      },
+    };
+  });
+</script>
 
 <style>
   /* Carousel Styles */

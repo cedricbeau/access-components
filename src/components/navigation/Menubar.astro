@@ -6,43 +6,7 @@
 <section class="component-section">
   <h2>Menubar</h2>
   <div
-    x-data="{
-            openMenus: [],
-
-                toggle(index) {
-                    if (this.isOpen(index)) {
-                        this.close(index);
-                    } else {
-                        this.closeAll();
-                        this.openMenus.push(index);
-                    }
-                },
-
-                isOpen(index) {
-                    return this.openMenus.includes(index);
-                },
-
-                close(index) {
-                    this.openMenus = this.openMenus.filter(i => i !== index);
-                },
-
-                closeAll() {
-                    this.openMenus = [];
-                },
-
-                selectItem(action) {
-                    console.log('Action sélectionnée:', action);
-                    this.closeAll();
-                },
-
-                nextItem() {
-                    // Navigation menubar elements
-                },
-
-                prevItem() {
-                    // Navigation menubar elements
-                }
-            }"
+    x-data="menubar()"
     class="menubar"
     role="menubar"
     @keydown.arrow-right.prevent="nextItem()"
@@ -142,6 +106,51 @@
     </div>
   </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("menubar", () => {
+    return {
+      isOpen: false,
+      openMenus: [],
+
+      toggle(index) {
+        if (this.isOpen(index)) {
+          this.close(index);
+        } else {
+          this.closeAll();
+          this.openMenus.push(index);
+        }
+      },
+
+      isOpen(index) {
+        return this.openMenus.includes(index);
+      },
+
+      close(index) {
+        this.openMenus = this.openMenus.filter((i) => i !== index);
+      },
+
+      closeAll() {
+        this.openMenus = [];
+      },
+
+      selectItem(action) {
+        console.log("Action sélectionnée:", action);
+        this.closeAll();
+      },
+
+      nextItem() {
+        // Navigation menubar elements
+      },
+
+      prevItem() {
+        // Navigation menubar elements
+      },
+    };
+  });
+</script>
 
 <style>
   /* Menubar Styles */

@@ -6,89 +6,7 @@
 <section class="component-section">
   <h2>Composant Pagination</h2>
 
-  <div
-    x-data="{
-            currentPage: 1,
-                totalPages: 10,
-                totalItems: 95,
-                itemsPerPage: 10,
-                maxVisiblePages: 5,
-
-                init() {
-                    this.$el.addEventListener('keydown', (e) => {
-                        if (e.target.classList.contains('pagination-button')) {
-                            this.handleKeyNavigation(e);
-                        }
-                    });
-                },
-
-                get visiblePages() {
-                    const pages = [];
-                    const half = Math.floor(this.maxVisiblePages / 2);
-                    let start = Math.max(1, this.currentPage - half);
-                    let end = Math.min(this.totalPages, start + this.maxVisiblePages - 1);
-
-                    if (end - start + 1 < this.maxVisiblePages) {
-                        start = Math.max(1, end - this.maxVisiblePages + 1);
-                    }
-
-                    for (let i = start; i <= end; i++) {
-                        pages.push(i);
-                    }
-
-                    return pages;
-                },
-
-                goToPage(page) {
-                    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
-                        this.currentPage = page;
-                        this.announcePageChange();
-                    }
-                },
-
-                announcePageChange() {
-                    const announcement = document.createElement('div');
-                    announcement.setAttribute('aria-live', 'assertive');
-                    announcement.setAttribute('aria-atomic', 'true');
-                    announcement.className = 'sr-only';
-                    announcement.textContent = `Page ${this.currentPage} chargée`;
-                    document.body.appendChild(announcement);
-
-                    setTimeout(() => {
-                        document.body.removeChild(announcement);
-                    }, 1000);
-                },
-
-                handleKeyNavigation(e) {
-                    const buttons = [...this.$el.querySelectorAll('.pagination-button:not(:disabled)')];
-                    const currentIndex = buttons.indexOf(e.target);
-
-                    switch(e.key) {
-                        case 'ArrowLeft':
-                            e.preventDefault();
-                            if (currentIndex > 0) {
-                                buttons[currentIndex - 1].focus();
-                            }
-                            break;
-                        case 'ArrowRight':
-                            e.preventDefault();
-                            if (currentIndex < buttons.length - 1) {
-                                buttons[currentIndex + 1].focus();
-                            }
-                            break;
-                        case 'Home':
-                            e.preventDefault();
-                            buttons[0].focus();
-                            break;
-                        case 'End':
-                            e.preventDefault();
-                            buttons[buttons.length - 1].focus();
-                            break;
-                    }
-                }
-            }"
-    x-init="init()"
-  >
+  <div x-data="pagination()" x-init="init()">
     <!-- Navigation de pagination -->
     <nav aria-label="Navigation de pagination" role="navigation">
       <div class="pagination-info" aria-live="polite" aria-atomic="true">
@@ -148,6 +66,95 @@
     </div>
   </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("pagination", () => {
+    return {
+      currentPage: 1,
+      totalPages: 10,
+      totalItems: 95,
+      itemsPerPage: 10,
+      maxVisiblePages: 5,
+
+      init() {
+        this.$el.addEventListener("keydown", (e) => {
+          if (e.target.classList.contains("pagination-button")) {
+            this.handleKeyNavigation(e);
+          }
+        });
+      },
+
+      get visiblePages() {
+        const pages = [];
+        const half = Math.floor(this.maxVisiblePages / 2);
+        let start = Math.max(1, this.currentPage - half);
+        let end = Math.min(this.totalPages, start + this.maxVisiblePages - 1);
+
+        if (end - start + 1 < this.maxVisiblePages) {
+          start = Math.max(1, end - this.maxVisiblePages + 1);
+        }
+
+        for (let i = start; i <= end; i++) {
+          pages.push(i);
+        }
+
+        return pages;
+      },
+
+      goToPage(page) {
+        if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+          this.currentPage = page;
+          this.announcePageChange();
+        }
+      },
+
+      announcePageChange() {
+        const announcement = document.createElement("div");
+        announcement.setAttribute("aria-live", "assertive");
+        announcement.setAttribute("aria-atomic", "true");
+        announcement.className = "sr-only";
+        announcement.textContent = `Page ${this.currentPage} chargée`;
+        document.body.appendChild(announcement);
+
+        setTimeout(() => {
+          document.body.removeChild(announcement);
+        }, 1000);
+      },
+
+      handleKeyNavigation(e) {
+        const buttons = [
+          ...this.$el.querySelectorAll(".pagination-button:not(:disabled)"),
+        ];
+        const currentIndex = buttons.indexOf(e.target);
+
+        switch (e.key) {
+          case "ArrowLeft":
+            e.preventDefault();
+            if (currentIndex > 0) {
+              buttons[currentIndex - 1].focus();
+            }
+            break;
+          case "ArrowRight":
+            e.preventDefault();
+            if (currentIndex < buttons.length - 1) {
+              buttons[currentIndex + 1].focus();
+            }
+            break;
+          case "Home":
+            e.preventDefault();
+            buttons[0].focus();
+            break;
+          case "End":
+            e.preventDefault();
+            buttons[buttons.length - 1].focus();
+            break;
+        }
+      },
+    };
+  });
+</script>
 
 <style>
   /* Styles pour la Pagination */

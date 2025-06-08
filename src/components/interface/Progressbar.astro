@@ -5,36 +5,7 @@
 <!-- Progress Bar Component -->
 <section class="component-section">
   <h2>Progress Bar</h2>
-  <div
-    x-data="{
-        progress: 0,
-        interval: null,
-
-        start() {
-            if (this.interval) return;
-
-            this.interval = setInterval(() => {
-                if (this.progress < 100) {
-                    this.progress += 1;
-                } else {
-                    this.stop();
-                }
-            }, 50);
-        },
-
-        stop() {
-            if (this.interval) {
-                clearInterval(this.interval);
-                this.interval = null;
-            }
-        },
-
-        reset() {
-            this.stop();
-            this.progress = 0;
-        }
-    }"
-  >
+  <div x-data="progressbar()">
     <div
       class="progress-container"
       role="progressbar"
@@ -53,6 +24,41 @@
     </div>
   </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("progressbar", () => {
+    return {
+      progress: 0,
+      interval: null,
+
+      start() {
+        if (this.interval) return;
+
+        this.interval = setInterval(() => {
+          if (this.progress < 100) {
+            this.progress += 1;
+          } else {
+            this.stop();
+          }
+        }, 50);
+      },
+
+      stop() {
+        if (this.interval) {
+          clearInterval(this.interval);
+          this.interval = null;
+        }
+      },
+
+      reset() {
+        this.stop();
+        this.progress = 0;
+      },
+    };
+  });
+</script>
 
 <style>
   /* Progress Bar Styles */

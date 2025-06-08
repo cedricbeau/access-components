@@ -5,57 +5,7 @@
 <!-- Card Component -->
 <section class="component-section">
   <h2>Cartes de Contenu Structurées</h2>
-  <div
-    x-data="{
-        selectedCard: null,
-                cards: [
-                    {
-                        id: 1,
-                        title: 'Projet Alpha',
-                        description: 'Une application web moderne avec une interface utilisateur intuitive et des fonctionnalités avancées.',
-                        imageText: '🚀',
-                        imageAlt: 'Icône de fusée représentant le projet Alpha'
-                    },
-                    {
-                        id: 2,
-                        title: 'Projet Beta',
-                        description: 'Un système de gestion complet pour optimiser les processus métier de votre entreprise.',
-                        imageText: '⚙️',
-                        imageAlt: 'Icône engrenage représentant le projet Beta'
-                    },
-                    {
-                        id: 3,
-                        title: 'Projet Gamma',
-                        description: 'Une solution mobile cross-platform pour atteindre votre audience sur tous les appareils.',
-                        imageText: '📱',
-                        imageAlt: 'Icône de téléphone représentant le projet Gamma'
-                    }
-                ],
-
-                selectCard(card) {
-                    this.selectedCard = card;
-                    this.announce(`Carte sélectionnée: ${card.title}`);
-                },
-
-                primaryAction(card) {
-                    this.announce(`Affichage des détails pour ${card.title}`);
-                },
-
-                secondaryAction(card) {
-                    this.announce(`Partage de ${card.title}`);
-                },
-
-                announce(message) {
-                    const announcer = document.createElement('div');
-                    announcer.setAttribute('role', 'status');
-                    announcer.setAttribute('aria-live', 'polite');
-                    announcer.className = 'sr-only';
-                    announcer.textContent = message;
-                    document.body.appendChild(announcer);
-                    setTimeout(() => document.body.removeChild(announcer), 1000);
-                }
-        }"
-  >
+  <div x-data="card()">
     <div class="card-grid">
       <template x-for="card in cards" :key="card.id">
         <article
@@ -120,6 +70,65 @@
     </div>
   </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("card", () => {
+    return {
+      selectedCard: null,
+      cards: [
+        {
+          id: 1,
+          title: "Projet Alpha",
+          description:
+            "Une application web moderne avec une interface utilisateur intuitive et des fonctionnalités avancées.",
+          imageText: "🚀",
+          imageAlt: "Icône de fusée représentant le projet Alpha",
+        },
+        {
+          id: 2,
+          title: "Projet Beta",
+          description:
+            "Un système de gestion complet pour optimiser les processus métier de votre entreprise.",
+          imageText: "⚙️",
+          imageAlt: "Icône engrenage représentant le projet Beta",
+        },
+        {
+          id: 3,
+          title: "Projet Gamma",
+          description:
+            "Une solution mobile cross-platform pour atteindre votre audience sur tous les appareils.",
+          imageText: "📱",
+          imageAlt: "Icône de téléphone représentant le projet Gamma",
+        },
+      ],
+
+      selectCard(card) {
+        this.selectedCard = card;
+        this.announce(`Carte sélectionnée: ${card.title}`);
+      },
+
+      primaryAction(card) {
+        this.announce(`Affichage des détails pour ${card.title}`);
+      },
+
+      secondaryAction(card) {
+        this.announce(`Partage de ${card.title}`);
+      },
+
+      announce(message) {
+        const announcer = document.createElement("div");
+        announcer.setAttribute("role", "status");
+        announcer.setAttribute("aria-live", "polite");
+        announcer.className = "sr-only";
+        announcer.textContent = message;
+        document.body.appendChild(announcer);
+        setTimeout(() => document.body.removeChild(announcer), 1000);
+      },
+    };
+  });
+</script>
 
 <style>
   /* Card Styles */

@@ -25,186 +25,7 @@
     </ul>
   </div>
 
-  <div
-    x-data="{
-  fields: {
-    email: { value: '', error: '', valid: false },
-    password: { value: '', error: '', valid: false },
-    confirmPassword: { value: '', error: '', valid: false },
-    age: { value: '', error: '', valid: false }
-  },
-  isSubmitting: false,
-  isSubmitted: false,
-  showSummary: false,
-
-  hasErrors() {
-    return Object.values(this.fields).some(field => field.error);
-  },
-
-  errorList() {
-    const errors = [];
-    const labels = {
-      email: 'E-mail',
-      password: 'Mot de passe',
-      confirmPassword: 'Confirmation du mot de passe',
-      age: 'Âge'
-    };
-
-    Object.entries(this.fields).forEach(([key, field]) => {
-      if (field.error) {
-        errors.push({
-          field: key,
-          label: labels[key],
-          message: field.error
-        });
-      }
-    });
-
-    return errors;
-  },
-
-  validateField(fieldName) {
-    const field = this.fields[fieldName];
-    const value = field.value.trim();
-
-    field.error = '';
-    field.valid = false;
-
-    switch (fieldName) {
-      case 'email':
-        if (!value) {
-          field.error = 'Une adresse e-mail est requise';
-        } else if (!this.isValidEmail(value)) {
-          field.error = 'Veuillez saisir une adresse e-mail valide';
-        } else {
-          field.valid = true;
-        }
-        break;
-
-      case 'password':
-        if (!value) {
-          field.error = 'Le mot de passe est requis';
-        } else if (value.length < 8) {
-          field.error = 'Le mot de passe doit contenir au moins 8 caractères';
-        } else if (!/(?=.*[A-Z])(?=.*\d)/.test(value)) {
-          field.error = 'Le mot de passe doit contenir au moins une majuscule et un chiffre';
-        } else {
-          field.valid = true;
-        }
-
-        if (this.fields.confirmPassword.value) {
-          this.validateField('confirmPassword');
-        }
-        break;
-
-      case 'confirmPassword':
-        if (!value) {
-          field.error = 'La confirmation du mot de passe est requise';
-        } else if (value !== this.fields.password.value) {
-          field.error = 'Les mots de passe ne correspondent pas';
-        } else {
-          field.valid = true;
-        }
-        break;
-
-      case 'age':
-        const age = parseInt(value);
-        if (!value) {
-          field.error = 'La date de naissance est requise';
-        } else if (isNaN(age)) {
-          field.error = 'Veuillez saisir un âge valide';
-        } else if (age < 13) {
-          field.error = 'Vous devez avoir au moins 13 ans';
-        } else if (age > 120) {
-          field.error = 'Veuillez saisir un âge réaliste';
-        } else {
-          field.valid = true;
-        }
-        break;
-    }
-  },
-
-  validateAllFields() {
-    Object.keys(this.fields).forEach(fieldName => {
-      this.validateField(fieldName);
-    });
-  },
-
-  clearFieldError(fieldName) {
-    if (this.fields[fieldName].error) {
-      this.fields[fieldName].error = '';
-    }
-  },
-
-submitForm() {
-    this.isSubmitting = true;
-    this.isSubmitted = false;
-    this.showSummary = false;
-
-    this.validateAllFields();
-
-    if (this.hasErrors) {
-        this.showSummary = true;
-        this.isSubmitting = false;
-
-        this.$nextTick(() => {
-            this.$refs.errorSummary?.focus();
-        });
-
-        return;
-    }
-
-    setTimeout(() => {
-        this.isSubmitting = false;
-        this.isSubmitted = true;
-
-        setTimeout(() => {
-            this.resetForm();
-        }, 3000);
-    }, 1000);
-},
-
-  resetForm() {
-    Object.keys(this.fields).forEach(key => {
-      this.fields[key] = { value: '', error: '', valid: false };
-    });
-    this.isSubmitted = false;
-    this.showSummary = false;
-  },
-
-  isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  },
-
-  getFieldClasses(fieldName) {
-    const field = this.fields[fieldName];
-    if (field.error) return 'input-error';
-    if (field.valid) return 'input-success';
-    return '';
-  },
-
-  getAriaDescribedBy(fieldName) {
-    const helpers = [`${fieldName}-help`];
-    const field = this.fields[fieldName];
-
-    if (field.error) {
-      helpers.push(`${fieldName}-error`);
-    } else if (field.valid) {
-      helpers.push(`${fieldName}-success`);
-    }
-
-    return helpers.join(' ');
-  },
-
-  focusField(fieldName) {
-    const field = document.getElementById(fieldName);
-    if (field) field.focus();
-  }
-}
-
-    "
-  >
+  <div x-data="formValidation()">
     <!-- Form Error Summary -->
     <div
       x-show="hasErrors && showSummary"
@@ -405,6 +226,191 @@ submitForm() {
     </form>
   </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("formValidation", () => {
+    return {
+      fields: {
+        email: { value: "", error: "", valid: false },
+        password: { value: "", error: "", valid: false },
+        confirmPassword: { value: "", error: "", valid: false },
+        age: { value: "", error: "", valid: false },
+      },
+      isSubmitting: false,
+      isSubmitted: false,
+      showSummary: false,
+
+      hasErrors() {
+        return Object.values(this.fields).some((field) => field.error);
+      },
+
+      errorList() {
+        const errors = [];
+        const labels = {
+          email: "E-mail",
+          password: "Mot de passe",
+          confirmPassword: "Confirmation du mot de passe",
+          age: "Âge",
+        };
+
+        Object.entries(this.fields).forEach(([key, field]) => {
+          if (field.error) {
+            errors.push({
+              field: key,
+              label: labels[key],
+              message: field.error,
+            });
+          }
+        });
+
+        return errors;
+      },
+
+      validateField(fieldName) {
+        const field = this.fields[fieldName];
+        const value = field.value.trim();
+
+        field.error = "";
+        field.valid = false;
+
+        switch (fieldName) {
+          case "email":
+            if (!value) {
+              field.error = "Une adresse e-mail est requise";
+            } else if (!this.isValidEmail(value)) {
+              field.error = "Veuillez saisir une adresse e-mail valide";
+            } else {
+              field.valid = true;
+            }
+            break;
+
+          case "password":
+            if (!value) {
+              field.error = "Le mot de passe est requis";
+            } else if (value.length < 8) {
+              field.error =
+                "Le mot de passe doit contenir au moins 8 caractères";
+            } else if (!/(?=.*[A-Z])(?=.*\d)/.test(value)) {
+              field.error =
+                "Le mot de passe doit contenir au moins une majuscule et un chiffre";
+            } else {
+              field.valid = true;
+            }
+
+            if (this.fields.confirmPassword.value) {
+              this.validateField("confirmPassword");
+            }
+            break;
+
+          case "confirmPassword":
+            if (!value) {
+              field.error = "La confirmation du mot de passe est requise";
+            } else if (value !== this.fields.password.value) {
+              field.error = "Les mots de passe ne correspondent pas";
+            } else {
+              field.valid = true;
+            }
+            break;
+
+          case "age":
+            const age = parseInt(value);
+            if (!value) {
+              field.error = "La date de naissance est requise";
+            } else if (isNaN(age)) {
+              field.error = "Veuillez saisir un âge valide";
+            } else if (age < 13) {
+              field.error = "Vous devez avoir au moins 13 ans";
+            } else if (age > 120) {
+              field.error = "Veuillez saisir un âge réaliste";
+            } else {
+              field.valid = true;
+            }
+            break;
+        }
+      },
+
+      validateAllFields() {
+        Object.keys(this.fields).forEach((fieldName) => {
+          this.validateField(fieldName);
+        });
+      },
+
+      clearFieldError(fieldName) {
+        if (this.fields[fieldName].error) {
+          this.fields[fieldName].error = "";
+        }
+      },
+
+      submitForm() {
+        this.isSubmitting = true;
+        this.isSubmitted = false;
+        this.showSummary = false;
+
+        this.validateAllFields();
+
+        if (this.hasErrors) {
+          this.showSummary = true;
+          this.isSubmitting = false;
+
+          this.$nextTick(() => {
+            this.$refs.errorSummary?.focus();
+          });
+
+          return;
+        }
+
+        setTimeout(() => {
+          this.isSubmitting = false;
+          this.isSubmitted = true;
+
+          setTimeout(() => {
+            this.resetForm();
+          }, 3000);
+        }, 1000);
+      },
+
+      resetForm() {
+        Object.keys(this.fields).forEach((key) => {
+          this.fields[key] = { value: "", error: "", valid: false };
+        });
+        this.isSubmitted = false;
+        this.showSummary = false;
+      },
+
+      isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      },
+
+      getFieldClasses(fieldName) {
+        const field = this.fields[fieldName];
+        if (field.error) return "input-error";
+        if (field.valid) return "input-success";
+        return "";
+      },
+
+      getAriaDescribedBy(fieldName) {
+        const helpers = [`${fieldName}-help`];
+        const field = this.fields[fieldName];
+
+        if (field.error) {
+          helpers.push(`${fieldName}-error`);
+        } else if (field.valid) {
+          helpers.push(`${fieldName}-success`);
+        }
+
+        return helpers.join(" ");
+      },
+
+      focusField(fieldName) {
+        const field = document.getElementById(fieldName);
+        if (field) field.focus();
+      },
+    };
+  });
+</script>
 
 <style>
   /* Form Styles */

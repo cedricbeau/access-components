@@ -6,22 +6,7 @@
 <section class="component-section">
   <h2>Tooltip</h2>
   <div style="display: flex; gap: 2rem; align-items: center;">
-    <div
-      x-data="{
-            isVisible: false,
-            position: 'top',
-            tooltipId: $id('tooltip'),
-
-            show() {
-                this.isVisible = true;
-            },
-
-            hide() {
-                this.isVisible = false;
-            }
-        }"
-      class="tooltip-container"
-    >
+    <div x-data="tooltip()" class="tooltip-container">
       <button
         class="btn"
         @mouseenter="show()"
@@ -38,26 +23,12 @@
         class="tooltip top"
         :id="tooltipId"
         role="tooltip"
-      >Informations contextuelles
+      >
+        Informations contextuelles
       </div>
     </div>
 
-    <div
-      x-data="{
-            isVisible: false,
-            position: 'bottom',
-            tooltipId: $id('tooltip'),
-
-            show() {
-                this.isVisible = true;
-            },
-
-            hide() {
-                this.isVisible = false;
-            }
-        }"
-      class="tooltip-container"
-    >
+    <div x-data="tooltip()" class="tooltip-container">
       <button
         class="btn"
         @mouseenter="show()"
@@ -74,11 +45,32 @@
         class="tooltip bottom"
         :id="tooltipId"
         role="tooltip"
-      >Informations contextuelles
+      >
+        Informations contextuelles
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("tooltip", () => {
+    return {
+      isVisible: false,
+      position: "top",
+      tooltipId: `$id('tooltip')`,
+
+      show() {
+        this.isVisible = true;
+      },
+
+      hide() {
+        this.isVisible = false;
+      },
+    };
+  });
+</script>
 
 <style>
   /* Tooltip Styles */

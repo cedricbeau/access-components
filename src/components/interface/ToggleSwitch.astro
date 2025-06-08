@@ -6,14 +6,7 @@
 <div class="component-section">
   <h2>Toggle Switch</h2>
   <div
-    x-data="{
-        isChecked: false,
-        descriptionId: $id('toggle-desc'),
-
-        onChange() {
-            this.$dispatch('toggle-changed', { checked: this.isChecked });
-        }
-    }"
+    x-data="toggleSwitch()"
     style="display: flex; align-items: center; gap: 1rem;"
   >
     <label class="toggle-switch" for="toggle-input">
@@ -37,6 +30,21 @@
       class="sr-only"></span>
   </div>
 </div>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("toggleSwitch", () => {
+    return {
+      isChecked: false,
+      descriptionId: `$id('toggle-desc')`,
+
+      onChange() {
+        this.$dispatch("toggle-changed", { checked: this.isChecked });
+      },
+    };
+  });
+</script>
 
 <style>
   /* Toggle Switch Styles */

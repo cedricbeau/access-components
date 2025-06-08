@@ -5,32 +5,7 @@
 <!-- Tabs Component -->
 <section class="component-section">
   <h2>Tabs</h2>
-  <div
-    x-data="{
-            activeTab: 0,
-
-                setActive(index) {
-                    this.activeTab = index;
-                },
-
-                nextTab() {
-                    this.activeTab = this.activeTab < 2 ? this.activeTab + 1 : 0;
-                },
-
-                prevTab() {
-                    this.activeTab = this.activeTab > 0 ? this.activeTab - 1 : 2;
-                },
-
-                firstTab() {
-                    this.activeTab = 0;
-                },
-
-                lastTab() {
-                    this.activeTab = 2;
-                }
-            }"
-    class="tabs-container"
-  >
+  <div x-data="tabs()" class="tabs-container">
     <div
       class="tabs-list"
       role="tablist"
@@ -114,6 +89,36 @@
     </div>
   </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("tabs", () => {
+    return {
+      activeTab: 0,
+
+      setActive(index) {
+        this.activeTab = index;
+      },
+
+      nextTab() {
+        this.activeTab = this.activeTab < 2 ? this.activeTab + 1 : 0;
+      },
+
+      prevTab() {
+        this.activeTab = this.activeTab > 0 ? this.activeTab - 1 : 2;
+      },
+
+      firstTab() {
+        this.activeTab = 0;
+      },
+
+      lastTab() {
+        this.activeTab = 2;
+      },
+    };
+  });
+</script>
 
 <style>
   /* Tabs Styles */

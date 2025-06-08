@@ -7,52 +7,7 @@
   <h2>Sidebar Navigation Drawer</h2>
 
   <div
-    x-data="{
-            isOpen: false,
-                activeItem: 'accueil',
-                focusableElements: [],
-                previouslyFocusedElement: null,
-
-                openSidebar() {
-                    this.previouslyFocusedElement = document.activeElement;
-                    this.isOpen = true;
-
-                    this.$nextTick(() => {
-                        setTimeout(() => {
-                            const firstFocusable = this.$el.querySelector('.sidebar-close');
-                            if (firstFocusable) {
-                                firstFocusable.focus();
-                            }
-                        }, 100);
-                    });
-                },
-
-                closeSidebar() {
-                    this.isOpen = false;
-
-                    if (this.previouslyFocusedElement) {
-                        this.previouslyFocusedElement.focus();
-                    }
-                },
-
-                setActiveItem(item) {
-                    this.activeItem = item;
-
-                    const announcement = document.createElement('div');
-                    announcement.setAttribute('aria-live', 'polite');
-                    announcement.className = 'sr-only';
-                    announcement.textContent = `${item} sélectionné`;
-                    document.body.appendChild(announcement);
-
-                    setTimeout(() => {
-                        document.body.removeChild(announcement);
-                    }, 1000);
-
-                    if (window.innerWidth <= 768) {
-                        setTimeout(() => this.closeSidebar(), 300);
-                    }
-                }
-            }"
+    x-data="sidebar()"
     @keydown.escape="closeSidebar()"
   >
     <!-- Bouton d'ouverture -->
@@ -182,6 +137,59 @@
     </aside>
   </div>
 </section>
+
+<script>
+    import { defineComponent } from "@utils/utils.js";
+
+    defineComponent("sidebar", () => {
+        return {
+            isOpen: false,
+            activeItem: "accueil",
+            focusableElements: [],
+            previouslyFocusedElement: null,
+
+            openSidebar() {
+                this.previouslyFocusedElement = document.activeElement;
+                this.isOpen = true;
+
+                this.$nextTick(() => {
+                    setTimeout(() => {
+                        const firstFocusable = this.$el.querySelector('.sidebar-close');
+                        if (firstFocusable) {
+                            firstFocusable.focus();
+                        }
+                    }, 100);
+                });
+            },
+
+            closeSidebar() {
+                this.isOpen = false;
+
+                if (this.previouslyFocusedElement) {
+                    this.previouslyFocusedElement.focus();
+                }
+            },
+
+            setActiveItem(item) {
+                this.activeItem = item;
+
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.className = 'sr-only';
+                announcement.textContent = `${item} sélectionné`;
+                document.body.appendChild(announcement);
+
+                setTimeout(() => {
+                    document.body.removeChild(announcement);
+                }, 1000);
+
+                if (window.innerWidth <= 768) {
+                    setTimeout(() => this.closeSidebar(), 300);
+                }
+            }
+        };
+    });
+</script>
 
 <style>
   /* Styles pour le Sidebar */

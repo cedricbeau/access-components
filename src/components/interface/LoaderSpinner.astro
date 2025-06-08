@@ -5,23 +5,7 @@
 <!-- Loading Spinner Component -->
 <section class="component-section">
   <h2>Loading Spinner</h2>
-  <div
-    x-data="{
-    isLoading: false,
-
-        toggleLoading() {
-            this.isLoading = !this.isLoading;
-        },
-
-        startLoading() {
-            this.isLoading = true;
-        },
-
-        stopLoading() {
-            this.isLoading = false;
-        }
-    }"
-  >
+  <div x-data="loaderSpinner()">
     <button class="btn" @click="toggleLoading()">
       <span x-text="isLoading ? 'Arrêter' : 'Démarrer'"></span> le chargement
     </button>
@@ -37,6 +21,28 @@
     </div>
   </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("loaderSpinner", () => {
+    return {
+      isLoading: false,
+
+      toggleLoading() {
+        this.isLoading = !this.isLoading;
+      },
+
+      startLoading() {
+        this.isLoading = true;
+      },
+
+      stopLoading() {
+        this.isLoading = false;
+      },
+    };
+  });
+</script>
 
 <style>
   /* Loading Spinner Styles */

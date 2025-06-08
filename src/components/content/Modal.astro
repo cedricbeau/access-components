@@ -12,24 +12,7 @@
   </div>
 
   <div
-    x-data="{
-    isOpen: false,
-                modalId: null,
-
-                open(id) {
-                    if (id === 'example-modal') {
-                        this.isOpen = true;
-                        this.modalId = id;
-                        document.body.style.overflow = 'hidden';
-                    }
-                },
-
-                close() {
-                    this.isOpen = false;
-                    this.modalId = null;
-                    document.body.style.overflow = '';
-                }
-    }"
+    x-data="modal()"
     x-show="isOpen"
     x-on:open-modal.window="open($event.detail.id)"
     x-on:close-modal.window="close()"
@@ -60,6 +43,31 @@
     </div>
   </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("modal", () => {
+    return {
+      isOpen: false,
+      modalId: null,
+
+      open(id) {
+        if (id === "example-modal") {
+          this.isOpen = true;
+          this.modalId = id;
+          document.body.style.overflow = "hidden";
+        }
+      },
+
+      close() {
+        this.isOpen = false;
+        this.modalId = null;
+        document.body.style.overflow = "";
+      },
+    };
+  });
+</script>
 
 <style>
   /* Modal Styles */

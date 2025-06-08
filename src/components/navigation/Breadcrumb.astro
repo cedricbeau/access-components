@@ -5,22 +5,7 @@
 <!-- Breadcrumb Component -->
 <section class="component-section">
   <h2>Breadcrumb</h2>
-  <nav
-    x-data="{
-            items: [
-                    { label: 'Accueil', url: '/' },
-                    { label: 'Produits', url: '/produits' },
-                    { label: 'Catégorie', url: '/produits/categorie' },
-                    { label: 'Article', url: '/produits/categorie/article' }
-                ],
-
-                navigate(url) {
-                    console.log('Nav to:', url);
-                }
-            }"
-    class="breadcrumb"
-    aria-label="Fil d'Ariane"
-  >
+  <nav x-data="breadcrumb()" class="breadcrumb" aria-label="Fil d'Ariane">
     <ol
       role="list"
       style="display: flex; align-items: center; gap: 0.5rem; list-style: none;"
@@ -45,6 +30,25 @@
     </ol>
   </nav>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+
+  defineComponent("breadcrumb", () => {
+    return {
+      items: [
+        { label: "Accueil", url: "/" },
+        { label: "Produits", url: "/produits" },
+        { label: "Catégorie", url: "/produits/categorie" },
+        { label: "Article", url: "/produits/categorie/article" },
+      ],
+
+      navigate(url) {
+        console.log("Nav to:", url);
+      },
+    };
+  });
+</script>
 
 <style>
   /* Breadcrumb Styles */
