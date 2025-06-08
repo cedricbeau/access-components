@@ -2,14 +2,12 @@
 
 ---
 
-<!-- Loading Spinner Component -->
 <section class="component-section">
-  <h2>Loading Spinner</h2>
+  <h3>Loading Spinner</h3>
   <div x-data="loaderSpinner()">
-    <button class="btn" @click="toggleLoading()">
-      <span x-text="isLoading ? 'Arrêter' : 'Démarrer'"></span> le chargement
+    <button class="btn btn-loader" @click="toggleLoading()">
+      <span x-text="isLoading ? 'Arrêter' : 'Démarrer'"></span><span>le chargement</span>
     </button>
-
     <div
       x-show="isLoading"
       class="loading-container"
@@ -45,7 +43,6 @@
 </script>
 
 <style>
-  /* Loading Spinner Styles */
   .spinner {
     border: 4px solid #f3f3f3;
     border-top: 4px solid #007acc;
@@ -71,5 +68,9 @@
     align-items: center;
     gap: 1rem;
     padding: 2rem;
+  }
+
+  .btn-loader {
+    column-gap: 0.25rem;
   }
 </style>

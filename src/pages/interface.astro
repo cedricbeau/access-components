@@ -1,0 +1,20 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import LoaderSpinner from '@components/interface/LoaderSpinner.astro';
+import Popover from '@components/interface/Popover.astro';
+import Progressbar from '@components/interface/Progressbar.astro';
+import ToggleSwitch from '@components/interface/ToggleSwitch.astro';
+import Tooltip from '@components/interface/Tooltip.astro';
+import BackBtn from '@components/BackBtn.astro';
+---
+
+<Layout>
+    <h1>Interface</h1>
+    <LoaderSpinner />
+    <Popover />
+    <Progressbar />
+    <ToggleSwitch />
+    <Tooltip />
+    <BackBtn backBtnHref="./" />
+</Layout>

@@ -3,12 +3,10 @@
 ---
 
 <section class="component-section">
-  <!-- Section de démo -->
-  <div>
-    <h2>Dialogs de Confirmation</h2>
-    <div
-      class="demo-controls"
-      x-data="{
+  <h3>Dialogs de Confirmation</h3>
+  <div
+    class="demo-controls"
+    x-data="{
         showConfirmDialog() {
             $dispatch('open-confirm-dialog', {
                 title: 'Sauvegarder les modifications ?',
@@ -24,14 +22,13 @@
             });
         }
     }"
-    >
-      <button class="btn btn-danger" @click="showDeleteDialog()">
-        Dialog Suppression
-      </button>
-      <button class="btn" @click="showConfirmDialog()">
-        Dialog Confirmation
-      </button>
-    </div>
+  >
+    <button class="btn btn-danger" @click="showDeleteDialog()">
+      Dialog Suppression
+    </button>
+    <button class="btn" @click="showConfirmDialog()">
+      Dialog Confirmation
+    </button>
   </div>
 
   <!-- Dialog de Confirmation -->
@@ -90,7 +87,7 @@
 
 <script>
   import { defineComponent } from "@utils/utils.js";
-  
+
   defineComponent("confirmationDialog", () => {
     return {
       isOpen: false,
@@ -215,5 +212,14 @@
     display: flex;
     gap: 12px;
     justify-content: flex-end;
+  }
+
+  .btn-danger {
+    background: #ef4444;
+    color: white;
+  }
+
+  .btn-danger:hover {
+    background: #dc2626;
   }
 </style>

@@ -1,0 +1,18 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import Combobox from '@components/form/Combobox.astro';
+import Datepicker from '@components/form/Datepicker.astro';
+import FileUpload from '@components/form/FileUpload.astro';
+import FormValidation from '@components/form/FormValidation.astro';
+import BackBtn from '@components/BackBtn.astro';
+---
+
+<Layout>
+    <h1>Form</h1>
+    <Combobox />
+    <Datepicker />
+    <FileUpload />
+    <FormValidation />
+    <BackBtn backBtnHref="./" />
+</Layout>

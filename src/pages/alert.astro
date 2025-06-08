@@ -1,0 +1,15 @@
+---
+import Layout from '@layouts/Layout.astro';
+import Banner from '@components/alert/Banner.astro';
+import ConfirmationDialog from '@components/alert/ConfirmationDialog.astro';
+import ToastNotification from '@components/alert/ToastNotification.astro';
+import BackBtn from '@components/BackBtn.astro';
+---
+
+<Layout>
+    <h1>Alert</h1>
+    <Banner />
+    <ConfirmationDialog />
+    <ToastNotification />
+    <BackBtn backBtnHref="./" />
+</Layout>

@@ -3,12 +3,10 @@
 ---
 
 <section class="component-section">
-  <!-- Section de démonstration -->
-  <div>
-    <h2>Banners d'Information</h2>
-    <div
-      class="demo-controls"
-      x-data="{
+  <h3>Banners d'Information</h3>
+  <div
+    class="demo-controls"
+    x-data="{
             showInfoBanner() {
                 $dispatch('show-banner', {
                     type: 'info',
@@ -38,17 +36,15 @@
                 });
             }
         }"
-    >
-      <button class="btn" @click="showInfoBanner()"> Banner Info </button>
-      <button class="btn" @click="showSuccessBanner()"> Banner Succès </button>
-      <button class="btn" @click="showWarningBanner()">
-        Banner Avertissement
-      </button>
-      <button class="btn" @click="showErrorBanner()"> Banner Erreur </button>
-    </div>
+  >
+    <button class="btn" @click="showInfoBanner()"> Banner Info </button>
+    <button class="btn" @click="showSuccessBanner()"> Banner Succès </button>
+    <button class="btn" @click="showWarningBanner()">
+      Banner Avertissement
+    </button>
+    <button class="btn" @click="showErrorBanner()"> Banner Erreur </button>
   </div>
 
-  <!-- Container pour les banners (position fixe) -->
   <div
     class="banner-container"
     x-data="banner()"

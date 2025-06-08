@@ -1,0 +1,22 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import Breadcrumb from '@components/navigation/Breadcrumb.astro';
+import Dropdown from '@components/navigation/Dropdown.astro';
+import Menubar from '@components/navigation/Menubar.astro';
+import Pagination from '@components/navigation/Pagination.astro';
+import SidebarNavigationDrawer from '@components/navigation/SidebarNavigationDrawer.astro';
+import Stepper  from '@components/navigation/Stepper.astro';
+import BackBtn from '@components/BackBtn.astro';
+---
+
+<Layout>
+    <h1>Navigation</h1>
+    <Breadcrumb />
+    <Dropdown />
+    <Menubar />
+    <Pagination />
+    <SidebarNavigationDrawer />
+    <Stepper />
+    <BackBtn backBtnHref="./" />
+</Layout>

@@ -1,3 +1,6 @@
+---
+import Navigation from "@components/Navigation.astro";
+---
 <!doctype html>
 <html lang="en">
   <head>
@@ -19,48 +22,78 @@
   </head>
   <body>
     <div class="container">
-      <h1>Bibliothèque de composants Alpine.js accessibles</h1>
-      <slot />
+        <aside class="aside">
+            <Navigation />
+        </aside>
+        <main class="main">
+            <slot />
+        </main>
     </div>
   </body>
 </html>
 
 <style is:global>
+  :root {
+    --color-primary: #007acc;
+    --color-primary-hover: #0056b3;
+    --color-secondary: #6c757d;
+    --color-secondary-hover: #545b62;
+
+    --body-background-color: #f5f5f5;
+    --body-text-color: #212121;
+
+    --border-color: #eee;
+  }
+
   * {
     box-sizing: border-box;
     margin: 0;
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-      sans-serif;
-    line-height: 1.6;
-    color: #333;
-    background: #f5f5f5;
     padding: 2rem;
+    color: var(--body-text-color);
+    background: var(--body-background-color);
+    font-family: system-ui, sans-serif;
+    line-height: 1.5;
   }
 
   .container {
-    max-width: 1200px;
-    margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      align-items: start;
+      column-gap: 1rem;
+      max-width: 1200px;
+      margin-inline: auto;
+  }
+
+  .aside {
+    position: sticky;
+    top: 0;
+    grid-column: span 3;
+  }
+
+  .main {
+    grid-column: span 9;
     background: white;
     padding: 2rem;
-    border-radius: 8px;
+    border-radius: 0.5rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
 
   h1,
-  h2 {
-    margin-bottom: 1rem;
+  h2,
+  h3 {
+    margin-bottom: 1em;
   }
 
   .component-section {
     margin-bottom: 3rem;
     padding-bottom: 2rem;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border-color);
   }
 
-  /* Utilitaires d'accessibilité */
+  /* Access utility */
   .sr-only {
     position: absolute;
     width: 1px;
@@ -78,13 +111,13 @@
     outline: none;
   }
 
-  /* Focus styles pour l'accessibilité */
+  /* Access Focus styles */
   :focus {
-    outline: 2px solid #007acc;
+    outline: 2px solid var(--color-primary-hover);
     outline-offset: 2px;
   }
 
-  /* Skip link pour l'accessibilité */
+  /* Access Skip link */
   .skip-link {
     position: absolute;
     top: -40px;
@@ -100,7 +133,7 @@
     top: 6px;
   }
 
-  /* Animation de slide pour les éléments qui apparaissent */
+  /* Slide Animation */
   .slide-in {
     animation: slideIn 0.3s ease forwards;
   }
@@ -120,47 +153,61 @@
     display: none !important;
   }
 
-  /* Boutons */
+  /* Buttons */
 
   .btn {
-    background: #007acc;
+    display: inline-flex;
+    align-items: center;
+    background: var(--color-primary);
     color: white;
     border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    border-radius: 0.25rem;
     cursor: pointer;
-    margin: 0.5rem;
+  }
+
+  .btn:has(svg) {
+    gap: 0.25rem;
   }
 
   .btn:hover,
   .btn:focus {
-    background: #0056b3;
-    outline: 2px solid #007acc;
+    background: var(--color-primary-hover);
   }
 
   .btn-secondary {
-    background: #6c757d;
+    background: var(--color-secondary);
     color: white;
   }
 
   .btn-secondary:hover,
   .btn-secondary:focus {
-    background: #545b62;
-    outline: 2px solid #6c757d;
-    outline-offset: 2px;
-  }
-
-  .btn-danger {
-    background: #ef4444;
-    color: white;
-  }
-
-  .btn-danger:hover {
-    background: #dc2626;
+    background: var(--color-secondary-hover);
+    outline: 2px solid var(--color-secondary);
   }
 
   .btn:disabled {
-    background: #9ca3af;
+    opacity: 0.5;
     cursor: not-allowed;
+  }
+
+  .btn-outline {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    text-decoration: none;
+    border: 1px solid var(--color-secondary);
+    color: var(--color-secondary);
+    background: transparent;
+    transition: all 0.2s;
+  }
+
+  .btn-outline:hover,
+  .btn-outline:focus {
+    background: var(--color-secondary-hover);
+    color: white;
+  }
+
+  .btn-outline:focus {
+    outline: 2px solid var(--color-secondary-hover);
   }
 </style>

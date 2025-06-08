@@ -1,0 +1,37 @@
+---
+---
+
+<ul>
+    <li><a href="./alert">Alert</a></li>
+    <li><a href="./content">Content</a></li>
+    <li><a href="./form">Form</a></li>
+    <li><a href="./interface">Interface</a></li>
+    <li><a href="./navigation">Navigation</a></li>
+</ul>
+
+<style>
+    ul {
+        list-style-type: none;
+        padding: 0;
+        border: 1px solid var(--border-color);
+
+        li {
+            + li {
+                border-block-start: 1px solid var(--border-color);
+            }
+        }
+
+        a {
+            display: block;
+            padding: 0.5rem;
+            color: var(--body-text-color);
+            text-decoration: none;
+            transition: all 0.3s;
+
+            &:hover {
+                color: var(--color-primary-hover);
+            }
+        }
+
+    }
+</style>
