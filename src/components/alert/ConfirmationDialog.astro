@@ -11,15 +11,15 @@
       x-data="{
         showConfirmDialog() {
             $dispatch('open-confirm-dialog', {
-                title: 'Sauvegarder les modifications ?', 
-                message: 'Vous avez des modifications non sauvegardées. Voulez-vous les sauvegarder maintenant ?', 
+                title: 'Sauvegarder les modifications ?',
+                message: 'Vous avez des modifications non sauvegardées. Voulez-vous les sauvegarder maintenant ?',
                 iconType: 'warning'
             });
         },
         showDeleteDialog() {
             $dispatch('open-confirm-dialog', {
-                title: 'Supprimer cet élément ?', 
-                message: 'Cette action est irréversible. Voulez-vous vraiment supprimer cet élément ?', 
+                title: 'Supprimer cet élément ?',
+                message: 'Cette action est irréversible. Voulez-vous vraiment supprimer cet élément ?',
                 iconType: 'warning'
             });
         }
@@ -36,52 +36,7 @@
 
   <!-- Dialog de Confirmation -->
   <div
-    x-data="{
-            isOpen: false,
-            title: '',
-            message: '',
-            iconType: 'warning',
-            dialogId: 'confirm-dialog-' + Math.random().toString(36).substr(2, 9),
-            resolvePromise: null,
-            previousFocus: null,
-
-            open(title, message, iconType = 'warning') {
-                this.title = title;
-                this.message = message;
-                this.iconType = iconType;
-                this.isOpen = true;
-                this.previousFocus = document.activeElement;
-
-                this.$nextTick(() => {
-                    this.$refs.cancelButton.focus();
-                });
-
-                return new Promise((resolve) => {
-                    this.resolvePromise = resolve;
-                });
-            },
-
-            confirm() {
-                this.close(true);
-            },
-
-            cancel() {
-                this.close(false);
-            },
-
-            close(result) {
-                this.isOpen = false;
-                if (this.resolvePromise) {
-                    this.resolvePromise(result);
-                    this.resolvePromise = null;
-                }
-
-                if (this.previousFocus) {
-                    this.previousFocus.focus();
-                    this.previousFocus = null;
-                }
-            }
-        }"
+    x-data="confirmationDialog()"
     @open-confirm-dialog.window="open($event.detail.title, $event.detail.message, $event.detail.iconType)"
     @keydown.escape.window="if (isOpen) cancel()"
   >
@@ -117,11 +72,7 @@
         <p :id="dialogId + '-message'" class="dialog-message" x-text="message">
         </p>
         <div class="dialog-actions">
-          <button
-            class="btn"
-            @click="cancel()"
-            x-ref="cancelButton"
-          >
+          <button class="btn" @click="cancel()" x-ref="cancelButton">
             Annuler
           </button>
           <button
@@ -136,6 +87,58 @@
     </div>
   </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+  defineComponent("confirmationDialog", () => {
+    return {
+      isOpen: false,
+      title: "",
+      message: "",
+      iconType: "warning",
+      dialogId: "confirm-dialog-" + Math.random().toString(36).substr(2, 9),
+      resolvePromise: null,
+      previousFocus: null,
+
+      open(title, message, iconType = "warning") {
+        this.title = title;
+        this.message = message;
+        this.iconType = iconType;
+        this.isOpen = true;
+        this.previousFocus = document.activeElement;
+
+        this.$nextTick(() => {
+          this.$refs.cancelButton.focus();
+        });
+
+        return new Promise((resolve) => {
+          this.resolvePromise = resolve;
+        });
+      },
+
+      confirm() {
+        this.close(true);
+      },
+
+      cancel() {
+        this.close(false);
+      },
+
+      close(result) {
+        this.isOpen = false;
+        if (this.resolvePromise) {
+          this.resolvePromise(result);
+          this.resolvePromise = null;
+        }
+
+        if (this.previousFocus) {
+          this.previousFocus.focus();
+          this.previousFocus = null;
+        }
+      },
+    };
+  });
+</script>
 
 <style>
   /* Styles pour les dialogs */

@@ -4,33 +4,7 @@
 
 <section class="component-section">
   <h2>Toast Notifications</h2>
-  <div
-    x-data="{
-  toasts: [],
-                nextId: 1,
-
-                addToast(type, title, message, duration = 5000) {
-                    const toast = {
-                        id: this.nextId++,
-                        type: type,
-                        title: title,
-                        message: message
-                    };
-
-                    this.toasts.push(toast);
-
-                    if (type !== 'error') {
-                        setTimeout(() => {
-                            this.removeToast(toast.id);
-                        }, duration);
-                    }
-                },
-
-                removeToast(id) {
-                    this.toasts = this.toasts.filter(toast => toast.id !== id);
-                }
-  }"
-  >
+  <div x-data="toastNotification()">
     <div style="margin-bottom: 1rem;">
       <button
         class="btn"
@@ -84,6 +58,37 @@
     </div>
   </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+  defineComponent("toastNotification", () => {
+    return {
+      toasts: [],
+      nextId: 1,
+
+      addToast(type, title, message, duration = 5000) {
+        const toast = {
+          id: this.nextId++,
+          type: type,
+          title: title,
+          message: message,
+        };
+
+        this.toasts.push(toast);
+
+        if (type !== "error") {
+          setTimeout(() => {
+            this.removeToast(toast.id);
+          }, duration);
+        }
+      },
+
+      removeToast(id) {
+        this.toasts = this.toasts.filter((toast) => toast.id !== id);
+      },
+    };
+  });
+</script>
 
 <style>
   /* Toast Styles */

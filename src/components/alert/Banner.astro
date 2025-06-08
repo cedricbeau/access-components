@@ -1,13 +1,14 @@
 ---
 
 ---
+
 <section class="component-section">
-<!-- Section de démonstration -->
-<div>
-  <h2>Banners d'Information</h2>
-  <div
-    class="demo-controls"
-    x-data="{
+  <!-- Section de démonstration -->
+  <div>
+    <h2>Banners d'Information</h2>
+    <div
+      class="demo-controls"
+      x-data="{
             showInfoBanner() {
                 $dispatch('show-banner', {
                     type: 'info',
@@ -37,120 +38,121 @@
                 });
             }
         }"
-  >
-    <button class="btn" @click="showInfoBanner()">
-      Banner Info
-    </button>
-    <button class="btn" @click="showSuccessBanner()">
-      Banner Succès
-    </button>
-    <button class="btn " @click="showWarningBanner()">
-      Banner Avertissement
-    </button>
-    <button class="btn" @click="showErrorBanner()">
-      Banner Erreur
-    </button>
-  </div>
-</div>
-
-<!-- Container pour les banners (position fixe) -->
-<div
-  class="banner-container"
-  x-data="{
-            banners: [],
-            nextId: 1,
-
-            showBanner(type, title, message, persistent = false) {
-                const id = this.nextId++;
-                const banner = {
-                    id,
-                    type,
-                    title,
-                    message,
-                    visible: true,
-                    persistent
-                };
-
-                this.banners.push(banner);
-
-                if (!persistent) {
-                    setTimeout(() => {
-                        this.hideBanner(id);
-                    }, 10000);
-                }
-
-                return id;
-            },
-
-            hideBanner(id) {
-                const bannerIndex = this.banners.findIndex(b => b.id === id);
-                if (bannerIndex !== -1) {
-                    this.banners[bannerIndex].visible = false;
-
-                    setTimeout(() => {
-                        this.banners = this.banners.filter(b => b.id !== id);
-                    }, 300);
-                }
-            },
-
-            hideAllBanners() {
-                this.banners.forEach(banner => {
-                    banner.visible = false;
-                });
-                setTimeout(() => {
-                    this.banners = [];
-                }, 300);
-            }
-         }"
-  @show-banner.window="showBanner($event.detail.type, $event.detail.title, $event.detail.message)"
-  @keydown.escape.window="hideAllBanners()"
->
-  <template x-for="banner in banners" :key="banner.id">
-    <div
-      :class="['banner', banner.type]"
-      role="banner"
-      :aria-labelledby="'banner-title-' + banner.id"
-      :aria-describedby="'banner-message-' + banner.id"
-      x-show="banner.visible"
-      x-transition:enter="transition ease-out duration-300"
-      x-transition:enter-start="transform translate-x-full opacity-0"
-      x-transition:enter-end="transform translate-x-0 opacity-100"
-      x-transition:leave="transition ease-in duration-200"
-      x-transition:leave-start="transform translate-x-0 opacity-100"
-      x-transition:leave-end="transform translate-x-full opacity-0"
     >
-      <div class="banner-icon" aria-hidden="true">
-        <span x-show="banner.type === 'info'">ℹ️</span>
-        <span x-show="banner.type === 'success'">✅</span>
-        <span x-show="banner.type === 'warning'">⚠️</span>
-        <span x-show="banner.type === 'error'">❌</span>
-      </div>
-      <div class="banner-content">
-        <h3
-          :id="'banner-title-' + banner.id"
-          class="banner-title"
-          x-text="banner.title"
-        >
-        </h3>
-        <p
-          :id="'banner-message-' + banner.id"
-          class="banner-message"
-          x-text="banner.message"
-        >
-        </p>
-      </div>
-      <button
-        class="banner-close"
-        @click="hideBanner(banner.id)"
-        :aria-label="'Fermer le banner ' + banner.title"
-        type="button"
-      >
-        ×
+      <button class="btn" @click="showInfoBanner()"> Banner Info </button>
+      <button class="btn" @click="showSuccessBanner()"> Banner Succès </button>
+      <button class="btn" @click="showWarningBanner()">
+        Banner Avertissement
       </button>
+      <button class="btn" @click="showErrorBanner()"> Banner Erreur </button>
     </div>
-  </template>
-</div>
+  </div>
+
+  <!-- Container pour les banners (position fixe) -->
+  <div
+    class="banner-container"
+    x-data="banner()"
+    @show-banner.window="showBanner($event.detail.type, $event.detail.title, $event.detail.message)"
+    @keydown.escape.window="hideAllBanners()"
+  >
+    <template x-for="banner in banners" :key="banner.id">
+      <div
+        :class="['banner', banner.type]"
+        role="banner"
+        :aria-labelledby="'banner-title-' + banner.id"
+        :aria-describedby="'banner-message-' + banner.id"
+        x-show="banner.visible"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="transform translate-x-full opacity-0"
+        x-transition:enter-end="transform translate-x-0 opacity-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="transform translate-x-0 opacity-100"
+        x-transition:leave-end="transform translate-x-full opacity-0"
+      >
+        <div class="banner-icon" aria-hidden="true">
+          <span x-show="banner.type === 'info'">ℹ️</span>
+          <span x-show="banner.type === 'success'">✅</span>
+          <span x-show="banner.type === 'warning'">⚠️</span>
+          <span x-show="banner.type === 'error'">❌</span>
+        </div>
+        <div class="banner-content">
+          <h3
+            :id="'banner-title-' + banner.id"
+            class="banner-title"
+            x-text="banner.title"
+          >
+          </h3>
+          <p
+            :id="'banner-message-' + banner.id"
+            class="banner-message"
+            x-text="banner.message"
+          >
+          </p>
+        </div>
+        <button
+          class="banner-close"
+          @click="hideBanner(banner.id)"
+          :aria-label="'Fermer le banner ' + banner.title"
+          type="button"
+        >
+          ×
+        </button>
+      </div>
+    </template>
+  </div>
 </section>
+
+<script>
+  import { defineComponent } from "@utils/utils.js";
+  defineComponent("banner", () => {
+    return {
+      banners: [],
+      nextId: 1,
+
+      showBanner(type, title, message, persistent = false) {
+        const id = this.nextId++;
+        const banner = {
+          id,
+          type,
+          title,
+          message,
+          visible: true,
+          persistent,
+        };
+
+        this.banners.push(banner);
+
+        if (!persistent) {
+          setTimeout(() => {
+            this.hideBanner(id);
+          }, 10000);
+        }
+
+        return id;
+      },
+
+      hideBanner(id) {
+        const bannerIndex = this.banners.findIndex((b) => b.id === id);
+        if (bannerIndex !== -1) {
+          this.banners[bannerIndex].visible = false;
+
+          setTimeout(() => {
+            this.banners = this.banners.filter((b) => b.id !== id);
+          }, 300);
+        }
+      },
+
+      hideAllBanners() {
+        this.banners.forEach((banner) => {
+          banner.visible = false;
+        });
+        setTimeout(() => {
+          this.banners = [];
+        }, 300);
+      },
+    };
+  });
+</script>
 
 <style>
   /* Styles pour les banners */
