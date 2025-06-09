@@ -38,7 +38,7 @@ body {
 
 .aside {
   position: sticky;
-  top: 0;
+  top: 2rem;
   grid-column: span 2;
 }
 
@@ -177,4 +177,11 @@ h3 {
   &:focus {
     outline: 2px solid var(--color-secondary-hover);
   }
+}
+
+/* Demo */
+.demo-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
