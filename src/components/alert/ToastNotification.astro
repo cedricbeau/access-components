@@ -62,6 +62,36 @@
 <script>
   import { defineComponent } from "@utils/utils.js";
 
+  /**
+   * Toast notification component handler
+   *
+   * @component
+   * @description Manages a stack of toast notifications with unique IDs and optional auto-dismiss
+   *
+   * @property {Array} toasts - Array storing active toast notifications
+   * @property {Number} nextId - Counter for generating unique toast IDs
+   *
+   * @method addToast
+   * @param {String} type - The type of toast notification (e.g., 'success', 'error', etc.)
+   * @param {String} title - The title text of the toast
+   * @param {String} message - The main message content of the toast
+   * @param {Number} [duration=5000] - Duration in milliseconds before auto-dismissal (default: 5000)
+   * @description Adds a new toast to the stack. Error toasts don't auto-dismiss
+   *
+   * @method removeToast
+   * @param {Number} id - The unique identifier of the toast to remove
+   * @description Removes a specific toast from the stack based on its ID
+   *
+   * @example
+   * // Adding a success toast
+   * addToast('success', 'Success!', 'Operation completed', 3000);
+   *
+   * // Adding an error toast (won't auto-dismiss)
+   * addToast('error', 'Error', 'Something went wrong');
+   *
+   * // Manually removing a toast
+   * removeToast(1);
+   */
   defineComponent("toastNotification", () => {
     return {
       toasts: [],
@@ -92,43 +122,75 @@
 </script>
 
 <style>
-  /* Toast Styles */
+  :root {
+    --toast-container-top: 1.25rem;
+    --toas-container-right: 1.25rem;
+    --toast-container-z-index: 1000;
+    --toast-container-gap: 0.625rem;
+
+    --toast-gap: 0.625rem;
+    --toast-min-width: 18.75rem;
+    --toast-padding: 1rem;
+    --toast-border: #ddd;
+    --toast-radius: 0.25rem;
+    --toast-bg: #fff;
+    --toast-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+    --toast-border-size: 0.25rem;
+
+    --toast-success-border-color: #28a745;
+    --toast-error-border-color: #dc3545;
+    --toast-warning-border-color: #ffc107;
+    --toast-info-border-color: #17a2b8;
+
+    --toast-title-weight: bold;
+    --toast-title-margin-bottom: 0.25rem;
+
+    --toast-close-padding: 0.25rem;
+    --toast-close-border: none;
+    --toast-close-border-radius: 0.25rem;
+    --toast-close-bg: transparent;
+
+    --toast-close-hover-bg: rgba(0, 0, 0, 0.1);
+    --toast-close-outline: 2px solid currentColor;
+  }
+
   .toast-container {
     position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
+    top: var(--toast-container-top);
+    right: var(--toas-container-right);
+    z-index: var(--toast-container-z-index);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--toast-container-gap);
   }
 
   .toast {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 1rem;
-    min-width: 300px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: flex-start;
-    gap: 1rem;
-  }
+    gap: var(--toast-gap);
+    background: var(--toast-bg);
+    border: 1px solid var(--toast-border);
+    border-radius: var(--toast-radius);
+    padding: var(--toast-padding);
+    min-width: var(--toast-min-width);
+    box-shadow: var(--toast-shadow);
 
-  .toast.success {
-    border-left: 4px solid #28a745;
-  }
+    &.success {
+      border-left: var(--toast-border-size) solid var(--toast-success-border-color);
+    }
 
-  .toast.error {
-    border-left: 4px solid #dc3545;
-  }
+    &.error {
+      border-left: var(--toast-border-size) solid var(--toast-error-border-color);
+    }
 
-  .toast.warning {
-    border-left: 4px solid #ffc107;
-  }
+    &.warning {
+      border-left: var(--toast-border-size) solid var(--toast-warning-border-color);
+    }
 
-  .toast.info {
-    border-left: 4px solid #17a2b8;
+    &.info {
+      border-left: var(--toast-border-size) solid var(--toast-info-border-color);
+    }
   }
 
   .toast-content {
@@ -136,21 +198,20 @@
   }
 
   .toast-title {
-    font-weight: bold;
-    margin-bottom: 0.25rem;
+    font-weight: var(--toast-title-weight);
+    margin-bottom: var(--toast-title-margin-bottom);
   }
 
   .toast-close {
-    background: none;
-    border: none;
+    padding: var(--toast-close-padding);
+    border: var(--toast-close-border);
+    border-radius: var(--toast-close-border-radius);
+    background: var(--toast-close-bg);
     cursor: pointer;
-    padding: 0.25rem;
-    border-radius: 2px;
-  }
 
-  .toast-close:hover,
-  .toast-close:focus {
-    background: rgba(0, 0, 0, 0.1);
-    outline: 2px solid currentColor;
+    &:is(:hover, :focus) {
+      background: var(--toast-close-hover-bg);
+      outline: var(--toast-close-outline);
+    }
   }
 </style>
