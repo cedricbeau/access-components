@@ -18,12 +18,12 @@
             $dispatch('open-confirm-dialog', {
                 title: 'Supprimer cet élément ?',
                 message: 'Cette action est irréversible. Voulez-vous vraiment supprimer cet élément ?',
-                iconType: 'warning'
+                iconType: 'error'
             });
         }
     }"
   >
-    <button class="btn btn-danger" @click="showDeleteDialog()">
+    <button class="btn btn-secondary" @click="showDeleteDialog()">
       Dialog Suppression
     </button>
     <button class="btn" @click="showConfirmDialog()">
@@ -69,11 +69,14 @@
         <p :id="dialogId + '-message'" class="dialog-message" x-text="message">
         </p>
         <div class="dialog-actions">
-          <button class="btn" @click="cancel()" x-ref="cancelButton">
+          <button
+            class="btn btn-secondary"
+            @click="cancel()"
+            x-ref="cancelButton">
             Annuler
           </button>
           <button
-            class="btn btn-danger"
+            class="btn"
             @click="confirm()"
             x-ref="confirmButton"
           >
@@ -106,7 +109,7 @@
         this.previousFocus = document.activeElement;
 
         this.$nextTick(() => {
-          this.$refs.cancelButton.focus();
+          this.$refs.confirmButton.focus();
         });
 
         return new Promise((resolve) => {
@@ -139,87 +142,97 @@
 </script>
 
 <style>
-  /* Styles pour les dialogs */
+  :root {
+    --dialog-overlay-z-index: 1001;
+    --dialog-overlay-background: rgba(0, 0, 0, 0.5);
+    --dialog-overlay-transition: opacity 0.3s ease;
+
+    --dialog-width: 90vw;
+    --dialog-max-width: 31.25rem;
+    --dialog-padding: 1.5rem;
+    --dialog-background: #fff;
+    --dialog-border-radius: 0.75rem;
+    --dialog-box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --dialog-transform: scale(0.95);
+    --dialog-transform-active: scale(1);
+    --dialog-transition: transform 0.3s ease;
+
+    --dialog-header-margin: 0 0 1rem;
+
+    --dialog-icon-size: 1.5rem;
+    --dialog-icon-margin: 0 0.75rem 0 0;
+    --dialog-icon-border-radius: 50%;
+
+    --dialog-title-margin: 0;
+    --dialog-title-font-size: 1.25rem;
+    --dialog-title-font-weight: 600;
+
+    --dialog-message-margin: 0 0 1.5rem;
+    --dialog-message-color: #6b7280;
+
+    --dialog-actions-justify-content: flex-end;
+    --dialog-actions-gap: 0.75rem;
+  }
+
   .dialog-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1001;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    z-index: var(--dialog-overlay-z-index);
+    background: var(--dialog-overlay-background);
+    display: grid;
+    place-content: center;
     opacity: 0;
-    transition: opacity 0.2s ease;
-  }
+    transition: var(--dialog-overlay-transition);
 
-  .dialog-overlay.show {
-    opacity: 1;
+    &.show {
+      opacity: 1;
+
+      .dialog {
+        transform: var(--dialog-transform-active);
+      }
+    }
   }
 
   .dialog {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    max-width: 500px;
-    width: 90%;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    transform: scale(0.95);
-    transition: transform 0.2s ease;
-  }
-
-  .dialog-overlay.show .dialog {
-    transform: scale(1);
+    width: var(--dialog-width);
+    max-width: var(--dialog-max-width);
+    padding: var(--dialog-padding);
+    background: var(--dialog-background);
+    border-radius: var(--dialog-border-radius);
+    box-shadow: var(--dialog-box-shadow);
+    transform: var(--dialog-transform);
+    transition: var(--dialog-transition);
   }
 
   .dialog-header {
     display: flex;
     align-items: center;
-    margin-bottom: 16px;
+    margin: var(--dialog-header-margin);
   }
 
   .dialog-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 12px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .dialog-icon.warning {
-    background: #fef3c7;
-    color: #d97706;
-  }
-
-  .dialog-icon.error {
-    background: #fecaca;
-    color: #dc2626;
+    display: grid;
+    place-content: center;
+    width: var(--dialog-icon-size);
+    height: var(--dialog-icon-size);
+    margin: var(--dialog-icon-margin);
+    border-radius: var(--dialog-icon-border-radius);
   }
 
   .dialog-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0;
+    margin: var(--dialog-title-margin);
+    font-size: var(--dialog-title-font-size);
+    font-weight: var(--dialog-title-font-weight);
   }
 
   .dialog-message {
-    margin: 0 0 24px 0;
-    color: #666;
+    margin: var(--dialog-message-margin);
+    color: var(--dialog-message-color);
   }
 
   .dialog-actions {
     display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-  }
-
-  .btn-danger {
-    background: #ef4444;
-    color: white;
-  }
-
-  .btn-danger:hover {
-    background: #dc2626;
+    justify-content: var(--dialog-actions-justify-content);
+    gap: var(--dialog-actions-gap);
   }
 </style>
