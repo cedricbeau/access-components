@@ -177,10 +177,13 @@
 
 <style>
   :root {
+    /* .dialog-overlay */
     --dialog-overlay-z-index: 1001;
     --dialog-overlay-background: rgba(0, 0, 0, 0.5);
     --dialog-overlay-transition: opacity 0.3s ease;
 
+    /* .dialog */
+    --dialog-z-index: 1002;
     --dialog-width: 90vw;
     --dialog-max-width: 31.25rem;
     --dialog-padding: 1.5rem;
@@ -191,19 +194,25 @@
     --dialog-transform-active: scale(1);
     --dialog-transition: transform 0.3s ease;
 
+    /* .dialog-header */
     --dialog-header-margin: 0 0 1rem;
 
+    /* .dialog-icon */
+    --dialog-icon-color: #f59e0b;
     --dialog-icon-size: 1.5rem;
     --dialog-icon-margin: 0 0.75rem 0 0;
     --dialog-icon-border-radius: 50%;
 
+    /* .dialog-title */
     --dialog-title-margin: 0;
     --dialog-title-font-size: 1.25rem;
     --dialog-title-font-weight: 600;
 
+    /* .dialog-message */
     --dialog-message-margin: 0 0 1.5rem;
     --dialog-message-color: #6b7280;
 
+    /* .dialog-actions */
     --dialog-actions-justify-content: flex-end;
     --dialog-actions-gap: 0.75rem;
   }

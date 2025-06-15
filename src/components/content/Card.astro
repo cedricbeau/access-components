@@ -166,13 +166,16 @@
 
 <style>
   :root {
+    /* .card-grid */
     --card-grid-min-width: 18.75rem;
     --card-grid-gap: 1.25rem;
     --card-grid-margin-top: 1.25rem;
     --card-grid-column-mobile: 1;
 
+    /* .card */
     --card-background: #fff;
     --card-border-radius: 0.5rem;
+    --card-overflow: hidden;
     --card-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.1);
     --card-hover-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.15);
     --card-hover-translate: -0.125rem;
@@ -181,6 +184,7 @@
     --card-focus-color: #4a90e2;
     --card-transition: transform 0.3s, box-shadow 0.3s;
 
+    /* .card-image */
     --card-image-width: 100%;
     --card-image-height: 12.5rem;
     --card-gradient-start: #667eea;
@@ -188,16 +192,22 @@
     --card-image-color: #fff;
     --card-image-font-size: 1.25rem;
 
+    /* .card-content */
     --card-content-padding: 1.25rem;
 
+    /* .card-title */
     --card-title-margin: 0 0 0.625rem 0;
     --card-title-size: 1.25rem;
     --card-title-weight: 600;
     --card-title-color: #2c3e50;
 
+    /* .card-desc */
     --card-desc-margin: 0 0 0.9375rem 0;
     --card-desc-color: #666;
     --card-desc-line-height: 1.5;
+
+    /* .card-actions */
+    --card-actions-gap: 0.625rem;
   }
 
   .card-grid {
@@ -210,7 +220,7 @@
   .card {
     background: var(--card-background);
     border-radius: var(--card-border-radius);
-    overflow: hidden;
+    overflow: var(--card-overflow);
     box-shadow: var(--card-shadow);
     transition: var(--card-transition);
     cursor: pointer;
@@ -227,9 +237,8 @@
   }
 
   .card-image {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-content: center;
     width: var(--card-image-width);
     height: var(--card-image-height);
     background: linear-gradient(
@@ -260,10 +269,10 @@
 
   .card-actions {
     display: flex;
-    gap: var(--card-gap);
+    gap: var(--card-actions-gap);
   }
 
-  @media (max-width: 48rem) {
+  @media (max-width: 768px) {
     .card-grid {
       grid-template-columns: var(--card-grid-column-mobile);
     }

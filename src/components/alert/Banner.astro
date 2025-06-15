@@ -179,54 +179,72 @@
 
 <style>
   :root {
+    /* .banner-container */
+    --banner-container-top: 1.25rem;
+    --banner-container-right: 1.25rem;
+    --banner-container-z-index: 1000;
+    --banner-container-max-width: 25rem;
+
+    /* .banner */
+    --banner-info-border-color: #bfdbfe;
+    --banner-info-background: #eff6ff;
+    --banner-info-color: #1e40af;
     --banner-gap: 0.75rem;
     --banner-padding: 1rem;
     --banner-margin: 0 0 0.75rem;
     --banner-border-radius: 0.5rem;
     --banner-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
+    /* .banner-info */
     --banner-info-color: #1e40af;
     --banner-info-background: #eff6ff;
     --banner-info-border-color: #bfdbfe;
 
+    /* .banner-success */
     --banner-success-color: #166534;
     --banner-success-background: #f0fdf4;
     --banner-success-border-color: #bbf7d0;
 
+    /* .banner-warning */
     --banner-warning-color: #c2410c;
     --banner-warning-background: #fff7ed;
     --banner-warning-border-color: #fed7aa;
 
+    /* .banner-error */
     --banner-error-color: #9f1239;
     --banner-error-background: #fef2f2;
     --banner-error-border-color: #fecaca;
 
+    /* .banner-icon */
     --banner-icon-size: 1.5rem;
     --banner-margin: 0.125rem 0 0;
 
+    /* .banner-title */
     --banner-title-margin: 0 0 0.25rem;
     --banner-title-font-weight: 600;
     --banner-title-font-size: 0.875rem;
 
+    /* .banner-message */
     --banner-message-margin: 0;
     --banner-message-font-size: 0.8125rem;
 
+    /* .banner-close */
     --banner-close-padding: 0.25rem;
     --banner-close-border: none;
     --banner-close-border-radius: 0.25rem;
-    --banner-background: none;
-    --banner-font-size: 1.125rem;
+    --banner-close-background: none;
+    --banner-close-font-size: 1.125rem;
     --banner-close-line-height: 1;
     --banner-close-opacity: 0.7;
-    --banner-outline: 2px solid currentColor;
+    --banner-close-outline: 2px solid currentColor;
   }
 
   .banner-container {
     position: fixed;
-    top: 1.25rem;
-    right: 1.25rem;
-    z-index: 1000;
-    max-width: 25rem;
+    top: var(--banner-container-top);
+    right: var(--banner-container-right);
+    z-index: var(--banner-container-z-index);
+    max-width: var(--banner-container-max-width);
   }
 
   .banner {
@@ -235,7 +253,7 @@
     gap: var(--banner-gap);
     padding: var(--banner-padding);
     margin: var(--banner-margin);
-    border: 1px solid transparent;
+    border: 0.0625rem solid transparent;
     border-radius: var(--banner-border-radius);
     box-shadow: var(--banner-box-shadow);
 
@@ -287,16 +305,16 @@
   .banner-close {
     padding: var(--banner-close-padding);
     border-radius: var(--banner-close-border-radius);
-    background: var(--banner-background);
+    background: var(--banner-close-background);
     border: var(--banner-close-border);
-    font-size: var(--banner-font-size);
+    font-size: var(--banner-close-font-size);
     line-height: var(--banner-close-line-height);
     opacity: var(--banner-close-opacity);
     cursor: pointer;
 
     &:is(:hover, :focus) {
       opacity: 1;
-      outline: var(--banner-outline);
+      outline: var(--banner-close-outline);
     }
   }
 </style>

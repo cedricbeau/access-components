@@ -117,23 +117,27 @@
 
 <style>
   :root {
+    /* .accordion */
     --accordion-border-color: #ddd;
     --accordion-border-width: 1px;
     --accordion-border-radius: 0.25rem;
 
+    /* .accordion-header */
     --accordion-header-width: 100%;
+    --accordion-header-padding: 1rem;
     --accordion-header-bg: #f8f9fa;
     --accordion-header-text-align: left;
     --accordion-header-hover-bg: #e9ecef;
     --accordion-header-focus-outline: #007acc;
     --accordion-header-focus-width: 0.125rem;
 
+    /* .accordion-content */
+    --accordion-content-padding: 1rem;
     --accordion-content-bg: white;
-
-    --accordion-padding: 1rem;
 
     --accordion-transition-duration: 0.3s;
 
+    /* .accordion-icon */
     --accordion-icon-rotated: rotate(180deg);
   }
 
@@ -158,7 +162,7 @@
     width: var(--accordion-header-width);
     background: var(--accordion-header-bg);
     border: none;
-    padding: var(--accordion-padding);
+    padding: var(--accordion-header-padding);
     text-align: var(--accordion-header-text-align);
     cursor: pointer;
 
@@ -170,7 +174,7 @@
   }
 
   .accordion-content {
-    padding: var(--accordion-padding);
+    padding: var(--accordion-content-padding);
     background: var(--accordion-content-bg);
   }
 

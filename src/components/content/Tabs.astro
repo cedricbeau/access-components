@@ -2,7 +2,6 @@
 
 ---
 
-<!-- Tabs Component -->
 <section class="component-section">
   <h3>Tabs</h3>
   <div x-data="tabs()" class="tabs-container">
@@ -93,6 +92,27 @@
 <script>
   import { defineComponent } from "@utils/utils.js";
 
+  /**
+   * Tabs component functionality
+   *
+   * @component
+   * @description Handles tab navigation and state management for a tabbed interface
+   *
+   * @property {number} activeTab - Current active tab index, defaults to 0
+   *
+   * @method setActive - Sets the active tab to specified index
+   * @param {number} index - Index of tab to activate
+   *
+   * @method nextTab - Moves to next tab, cycles back to first tab after last
+   * @method prevTab - Moves to previous tab, cycles to last tab from first
+   * @method firstTab - Moves to first tab (index 0)
+   * @method lastTab - Moves to last tab (index 2)
+   *
+   * @example
+   * const tabs = defineComponent("tabs");
+   * tabs.setActive(1); // Activates second tab
+   * tabs.nextTab(); // Moves to next tab
+   */
   defineComponent("tabs", () => {
     return {
       activeTab: 0,
@@ -121,39 +141,65 @@
 </script>
 
 <style>
-  /* Tabs Styles */
+  :root {
+    /* .tabs-container */
+    --tabs-container-border-color: #ddd;
+    --tabs-container-border-radius: 0.25rem;
+
+    /* .tabs-list */
+    --tabs-list-bg: #f8f9fa;
+    --tabs-list-border-color: #ddd;
+
+    /* .tab-button */
+    --tab-button-padding: 1rem;
+    --tab-button-background: none;
+    --tab-button-border: none;
+    --tab-button-border-bottom-width: 0.1875rem;
+    --tab-button-border-bottom-color: transparent;
+    --tab-button-bg-hover: #e9ecef;
+    --tab-button-outline-color: #007acc;
+    --tab-button-outline-width: 0.125rem;
+    --tab-button-bg-active: #fff;
+    --tab-button-border-bottom-color-active: #007acc;
+
+    /* .tab-panel */
+    --tab-panel-padding: 1.5rem;
+    --tab-panel-bg: #fff;
+  }
+
   .tabs-container {
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 0.0625rem solid var(--tabs-container-border-color);
+    border-radius: var(--tabs-container-border-radius);
   }
 
   .tabs-list {
     display: flex;
-    background: #f8f9fa;
-    border-bottom: 1px solid #ddd;
+    background: var(--tabs-list-bg);
+    border-bottom: 0.0625rem solid var(--tabs-list-border-color);
   }
 
   .tab-button {
-    background: none;
-    border: none;
-    padding: 1rem;
+    padding: var(--tab-button-padding);
+    background: var(--tab-button-background);
+    border: var(--tab-button-border);
+    border-bottom: var(--tab-button-border-bottom-width) solid
+      var(--tab-button-border-bottom-color);
     cursor: pointer;
-    border-bottom: 3px solid transparent;
-  }
 
-  .tab-button:hover,
-  .tab-button:focus {
-    background: #e9ecef;
-    outline: 2px solid #007acc;
-  }
+    &:is(:hover, :focus) {
+      background: var(--tab-button-bg-hover);
+      outline: var(--tab-button-outline-width) solid
+        var(--tab-button-outline-color);
+    }
 
-  .tab-button.active {
-    border-bottom-color: #007acc;
-    background: white;
+    &.active {
+      border-bottom-color: var(--tab-button-border-bottom-color-active);
+      background: var(--tab-button-bg-active);
+    }
   }
 
   .tab-panel {
-    padding: 1.5rem;
-    background: white;
+    padding: var(--tab-panel-padding);
+    background: var(--tab-panel-bg);
   }
 </style>

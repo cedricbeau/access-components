@@ -2,7 +2,6 @@
 
 ---
 
-<!-- Sortable Table Component -->
 <section class="component-section">
   <h3>Table Triable et Filtrable</h3>
   <div x-data="tableSortable()">
@@ -73,6 +72,35 @@
 <script>
   import { defineComponent } from "@utils/utils.js";
 
+  /**
+   * @component TableSortable
+   * @description A sortable and filterable table component implemented using Alpine.js in Astro.
+   *
+   * @property {string} sortColumn - Current column being sorted
+   * @property {string} sortDirection - Sort direction ('asc' or 'desc')
+   * @property {string} filter - Current filter text
+   * @property {Array} columns - Array of column definitions with key and label
+   * @property {Array} data - Array of objects containing table data
+   *
+   * @method filteredAndSortedData - Computed property that returns filtered and sorted data
+   * @method sort(column) - Handles column sorting and announces sort state for accessibility
+   * @method getSortState(column) - Returns current sort state for a column ('none', 'ascending', 'descending')
+   * @method getSortIcon(column) - Returns appropriate sort icon for a column ('↕', '↑', '↓')
+   * @method announce(message) - Creates temporary announcement for screen readers
+   *
+   * @features
+   * - Sortable columns with ascending/descending toggle
+   * - Global text filtering across all fields
+   * - Special handling for salary sorting (removes currency symbol and spaces)
+   * - Accessibility support with ARIA announcements
+   * - Screen reader compatibility
+   * - Responsive table design
+   *
+   * @accessibility
+   * - Uses aria-sort attributes for sorting status
+   * - Implements live regions for sort announcements
+   * - Provides screen reader feedback for sorting actions
+   */
   defineComponent("tableSortable", () => {
     return {
       sortColumn: "",
@@ -192,68 +220,110 @@
 </script>
 
 <style>
-  /* Table Styles */
+  :root {
+    /* .table-container */
+    --table-container-overflow-x: auto;
+    --table-container-radius: 0.5rem;
+    --table-container-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.1);
+
+    /* .sortable-table */
+    --sortable-table-width: 100%;
+    --sortable-table-border-collapse: collapse;
+    --sortable-table-bg: #ffffff;
+    --sortable-table-border-color: #eeeeee;
+    --sortable-table-cell-padding-y: 0.75rem;
+    --sortable-table-cell-padding-x: 0.9375rem;
+
+    --sortable-table-th-bg: #f8f9fa;
+    --sortable-table-th-bg-hover: #e9ecef;
+    --sortable-table-th-font-weight: 600;
+    --sortable-table-th-outline-color: #4a90e2;
+    --sortable-table-th-outline-width: 0.125rem;
+    --sortable-table-th-outline-offset: -0.125rem;
+
+    /* .sort-indicator */
+    --sort-indicator-top: 50%;
+    --sort-indicator-transform: translateY(-50%);
+    --sort-indicator-offset-right: 0.5rem;
+    --sort-indicator-opacity: 0.5;
+    --sort-indicator-opacity-active: 1;
+    --sort-indicator-color-active: #4a90e2;
+
+    /* .table-filter */
+    --table-filter-width: 100%;
+    --table-filter-max-width: 18.75rem;
+    --table-filter-margin-bottom: 0.9375rem;
+    --table-filter-padding: 0.625rem;
+    --table-filter-border: 0.0625rem solid #ddd;
+    --table-filter-border-radius: 0.25rem;
+    --table-filter-font-size: 1rem;
+    --table-filter-border-focus-color: #4a90e2;
+    --table-filter-outline: 0.125rem solid #4a90e2;
+  }
+
   .table-container {
-    overflow-x: auto;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow-x: var(--table-container-overflow-x);
+    border-radius: var(--table-container-radius);
+    box-shadow: var(--table-container-shadow);
   }
 
   .sortable-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-  }
+    width: var(--sortable-table-width);
+    border-collapse: var(--sortable-table-border-collapse);
+    background: var(--sortable-table-bg);
 
-  .sortable-table th,
-  .sortable-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #eee;
-  }
+    th,
+    td {
+      padding: var(--sortable-table-cell-padding-y)
+        var(--sortable-table-cell-padding-x);
+      border-bottom: 0.0625rem solid var(--sortable-table-border-color);
+      text-align: left;
+    }
 
-  .sortable-table th {
-    background: #f8f9fa;
-    font-weight: 600;
-    position: relative;
-    cursor: pointer;
-    user-select: none;
-  }
+    th {
+      position: relative;
+      background: var(--sortable-table-th-bg);
+      font-weight: var(--sortable-table-th-font-weight);
+      cursor: pointer;
+      user-select: none;
 
-  .sortable-table th:hover {
-    background: #e9ecef;
-  }
+      &:hover {
+        background: var(--sortable-table-th-bg-hover);
+      }
 
-  .sortable-table th:focus {
-    outline: 2px solid #4a90e2;
-    outline-offset: -2px;
+      &:focus {
+        outline: var(--sortable-table-th-outline-width) solid
+          var(--sortable-table-th-outline-color);
+        outline-offset: var(--sortable-table-th-outline-offset);
+      }
+    }
   }
 
   .sort-indicator {
     position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0.5;
-  }
+    top: var(--sort-indicator-top);
+    right: var(--sort-indicator-offset-right);
+    transform: var(--sort-indicator-transform);
+    opacity: var(--sort-indicator-opacity);
 
-  .sort-indicator.active {
-    opacity: 1;
-    color: #4a90e2;
+    &.active {
+      opacity: var(--sort-indicator-opacity-active);
+      color: var(--sort-indicator-color-active);
+    }
   }
 
   .table-filter {
-    margin-bottom: 15px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-    width: 100%;
-    max-width: 300px;
-  }
+    width: var(--table-filter-width);
+    max-width: var(--table-filter-max-width);
+    margin-bottom: var(--table-filter-margin-bottom);
+    padding: var(--table-filter-padding);
+    border: var(--table-filter-border);
+    border-radius: var(--table-filter-border-radius);
+    font-size: var(--table-filter-font-size);
 
-  .table-filter:focus {
-    outline: 2px solid #4a90e2;
-    border-color: #4a90e2;
+    &:focus {
+      border-color: var(--table-filter-border-focus-color);
+      outline: var(--table-filter-outline);
+    }
   }
 </style>

@@ -2,7 +2,6 @@
 
 ---
 
-<!-- Modal Component -->
 <section class="component-section">
   <h3>Modal</h3>
   <div x-data="{ openModal: (id) => $dispatch('open-modal', { id }) }">
@@ -47,6 +46,29 @@
 <script>
   import { defineComponent } from "@utils/utils.js";
 
+/**
+ * Modal component functionality
+ *
+ * @component
+ * @description Defines a modal component with open/close functionality and body scroll management
+ *
+ * @property {boolean} isOpen - Controls the visibility state of the modal
+ * @property {string|null} modalId - Stores the ID of the currently open modal
+ *
+ * @method open
+ * @param {string} id - The ID of the modal to open
+ * @description Opens the modal if the ID matches "example-modal" and prevents body scrolling
+ *
+ * @method close
+ * @description Closes the modal and restores body scrolling
+ *
+ * @example
+ * // Opening a modal
+ * modal.open("example-modal");
+ *
+ * // Closing a modal
+ * modal.close();
+ */
   defineComponent("modal", () => {
     return {
       isOpen: false,
@@ -70,48 +92,74 @@
 </script>
 
 <style>
-  /* Modal Styles */
-  .modal-overlay {
+:root {
+    /* .modal-overlay */
+    --modal-overlay-inset: 0;
+    --modal-overlay-z-index: 1000;
+    --modal-overlay-width: 100vw;
+    --modal-overlay-height: 100dvh;
+    --modal-overlay-bg: rgba(0, 0, 0, 0.5);
+
+    /* .modal-content */
+    --modal-content-bg: white;
+    --modal-content-padding: 2rem;
+    --modal-content-radius: 0.5rem;
+    --modal-content-max-width: 31.25rem;
+    --modal-content-width: 90%;
+    --modal-content-shadow: 0 0.625rem 1.5625rem rgba(0, 0, 0, 0.2);
+
+    /* .modal-header */
+    --modal-header-margin: 1rem;
+
+    /* .close-btn */
+    --close-btn-font-size: 1.5rem;
+    --close-btn-padding: 0.5rem;
+    --close-btn-radius: 0.25rem;
+    --close-btn-hover-bg: #f0f0f0;
+    --close-btn-focus-outline: 2px solid #007acc;
+    --close-btn-background: none;
+    --close-btn-border: none;
+}
+
+.modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
+    inset: var(--modal-overlay-inset);
+    z-index: var(--modal-overlay-z-index);
+    display: grid;
+    place-content: center;
+    width: var(--modal-overlay-width);
+    height: var(--modal-overlay-height);
+    background: var(--modal-overlay-bg);
+}
 
-  .modal-content {
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    max-width: 500px;
-    width: 90%;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  }
+.modal-content {
+    width: var(--modal-content-width);
+    max-width: var(--modal-content-max-width);
+    padding: var(--modal-content-padding);
+    border-radius: var(--modal-content-radius);
+    background: var(--modal-content-bg);
+    box-shadow: var(--modal-content-shadow);
+}
 
-  .modal-header {
+.modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
-  }
+    margin-bottom: var(--modal-header-margin);
+}
 
-  .close-btn {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
+.close-btn {
+    padding: var(--close-btn-padding);
+    border-radius: var(--close-btn-radius);
+    background: var(--close-btn-background);
+    border: var(--close-btn-border);
+    font-size: var(--close-btn-font-size);
     cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 4px;
-  }
 
-  .close-btn:hover,
-  .close-btn:focus {
-    background: #f0f0f0;
-    outline: 2px solid #007acc;
-  }
+
+    &:is(:hover, :focus) {
+        background: var(--close-btn-hover-bg);
+        outline: var(--close-btn-focus-outline);
+    }
+}
 </style>

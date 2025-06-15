@@ -2,7 +2,6 @@
 
 ---
 
-<!-- Carousel Component -->
 <section class="component-section">
   <h3>Carousel / Slider Accessible</h3>
   <div
@@ -67,6 +66,34 @@
 <script>
   import { defineComponent } from "@utils/utils.js";
 
+  /**
+   * A carousel component that displays slides with automatic playback and keyboard navigation.
+   *
+   * @component
+   * @example
+   * <div x-data="carousel">
+   *   <!-- Carousel content -->
+   * </div>
+   *
+   * @property {number} currentSlide - Index of the currently displayed slide (zero-based)
+   * @property {number|null} autoPlayInterval - Timer ID for automatic slide progression
+   * @property {Array<Object>} slides - Array of slide objects containing content and alt text
+   *
+   * @method init() - Initializes keyboard navigation and auto-play functionality
+   * @method nextSlide() - Advances to the next slide
+   * @method prevSlide() - Returns to the previous slide
+   * @method goToSlide(index) - Jumps to a specific slide by index
+   * @method startAutoPlay() - Begins automatic slide progression (5 second intervals)
+   * @method stopAutoPlay() - Halts automatic slide progression
+   * @method announceSlide() - Announces current slide position for screen readers
+   * @method announce(message) - Creates temporary announcement for screen readers
+   *
+   * @accessibility
+   * - Supports keyboard navigation (left/right arrows)
+   * - Includes ARIA live announcements for slide changes
+   * - Auto-play pauses on hover and focus
+   * - Screen reader announcements for slide position
+   */
   defineComponent("carousel", () => {
     return {
       currentSlide: 0,
@@ -146,117 +173,172 @@
 </script>
 
 <style>
-  /* Carousel Styles */
-  .carousel {
-    position: relative;
-    max-width: 600px;
-    margin: 0 auto;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  }
+:root {
+    /* .carousel */
+    --carousel-max-width: 37.5rem;
+    --carousel-margin: 0 auto;
+    --carousel-border-radius: 0.5rem;
+    --carousel-shadow: 0 0.25rem 0.9375rem rgba(0, 0, 0, 0.2);
+    --carousel-overflow: hidden;
 
-  .carousel-container {
-    position: relative;
-    height: 300px;
-    overflow: hidden;
-  }
+    /* .carousel-container */
+    --carousel-container-height: 18.75rem;
+    --carousel-container-overflow: hidden;
+    --carousel-container-radius: var(--carousel-border-radius);
 
-  .carousel-slide {
+    --carousel-transition: 0.5s ease-in-out;
+
+    /* .carousel-slide */
+    --carousel-slide-width: 100%;
+    --carousel-slide-height: 100%;
+    --carousel-slide-color: #fff;
+    --carousel-slide-font-size: 2rem;
+    --carousel-slide-text-shadow: 0.125rem 0.125rem 0.25rem rgba(0, 0, 0, 0.5);
+    --carousel-slide-transition: var(--carousel-transition);
+    --carousel-slide-opacity: 0;
+    --carousel-slide-active-opacity: 1;
+
+    /* .carousel-controls */
+    --carousel-controls-bg: rgba(0, 0, 0, 0.7);
+    --carousel-controls-hover-bg: rgba(0, 0, 0, 0.9);
+    --carousel-controls-padding: 0.9375rem 1.25rem;
+    --carousel-controls-font-size: 1.125rem;
+    --carousel-controls-radius: 0.25rem;
+    --carousel-controls-color: #fff;
+    --carousel-controls-border: none;
+    --carousel-controls-position-top: 50%;
+    --carousel-controls-transform: translateY(-50%);
+    --carousel-controls-position: absolute;
+    --carousel-controls-prev-left: 0.625rem;
+    --carousel-controls-next-right: 0.625rem;
+
+    /* .carousel-indicators */
+    --carousel-indicators-gap: 0.625rem;
+    --carousel-indicators-margin: 1rem;
+
+    /* .carousel-indicator */
+    --carousel-indicator-size: 0.75rem;
+    --carousel-indicator-bg: #ccc;
+    --carousel-indicator-active-bg: #4a90e2;
+    --carousel-indicator-hover-bg: #666;
+    --carousel-indicator-border: none;
+    --carousel-indicator-border-radius: 50%;
+    --carousel-indicator-transition: background 0.3s;
+
+    --carousel-outline-color: #4a90e2;
+    --carousel-outline-width: 0.125rem;
+    --carousel-outline-offset: 0.125rem;
+}
+
+.carousel {
+    position: relative;
+    max-width: var(--carousel-max-width);
+    margin: var(--carousel-margin);
+    border-radius: var(--carousel-border-radius);
+    overflow: var(--carousel-overflow);
+    box-shadow: var(--carousel-shadow);
+}
+
+.carousel-container {
+    position: relative;
+    height: var(--carousel-container-height);
+    overflow: var(--carousel-container-overflow);
+}
+
+.carousel-slide {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    transition: opacity 0.5s ease-in-out;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  }
+    display: grid;
+    place-content: center;
+    width: var(--carousel-slide-width);
+    height: var(--carousel-slide-height);
+    font-size: var(--carousel-slide-font-size);
+    color: var(--carousel-slide-color);
+    text-shadow: var(--carousel-slide-text-shadow);
+    opacity: var(--carousel-slide-opacity);
+    transition: opacity var(--carousel-transition);
 
-  .carousel-slide.active {
-    opacity: 1;
-  }
-
-  .carousel-slide:nth-child(1) {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  }
-  .carousel-slide:nth-child(2) {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  }
-  .carousel-slide:nth-child(3) {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  }
-  .carousel-slide:nth-child(4) {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  }
-
-  .carousel-controls {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    border: none;
-    padding: 15px 20px;
-    cursor: pointer;
-    font-size: 18px;
-    border-radius: 4px;
-    transition: background 0.3s;
-  }
-
-  .carousel-controls:hover,
-  .carousel-controls:focus {
-    background: rgba(0, 0, 0, 0.9);
-    outline: 2px solid #4a90e2;
-    outline-offset: 2px;
-  }
-
-  .carousel-prev {
-    left: 10px;
-  }
-
-  .carousel-next {
-    right: 10px;
-  }
-
-  .carousel-indicators {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-block: 15px;
-  }
-
-  .carousel-indicator {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: none;
-    background: #ccc;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-
-  .carousel-indicator.active {
-    background: #4a90e2;
-  }
-
-  .carousel-indicator:hover,
-  .carousel-indicator:focus {
-    background: #666;
-    outline: 2px solid #4a90e2;
-    outline-offset: 2px;
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .carousel-controls {
-      padding: 10px 15px;
-      font-size: 16px;
+    &.active {
+        opacity: var(--carousel-slide-active-opacity)
     }
-  }
+
+    &:nth-child(1) {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    &:nth-child(2) {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    &:nth-child(3) {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    &:nth-child(4) {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+}
+
+.carousel-controls {
+    position: var(--carousel-controls-position);
+    top: var(--carousel-controls-position-top);
+    transform: var(--carousel-controls-transform);
+    padding: var(--carousel-controls-padding);
+    border: var(--carousel-controls-border);
+    border-radius: var(--carousel-controls-radius);
+    background: var(--carousel-controls-bg);
+    color: var(--carousel-controls-color);
+    font-size: var(--carousel-controls-font-size);
+    cursor: pointer;
+    transition: background 0.3s;
+
+    &:is(:hover, :focus) {
+        background: var(--carousel-controls-hover-bg);
+        outline: var(--carousel-outline-width) solid var(--carousel-outline-color);
+        outline-offset: var(--carousel-outline-offset);
+    }
+}
+
+.carousel-prev {
+    left: var(--carousel-controls-prev-left);
+}
+
+.carousel-next {
+    right: var(--carousel-controls-next-right);
+}
+
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: var(--carousel-indicators-gap);
+    margin-block: var(--carousel-indicators-margin);
+}
+
+.carousel-indicator {
+    width: var(--carousel-indicator-size);
+    height: var(--carousel-indicator-size);
+    border: var(--carousel-indicator-border);
+    border-radius: var(--carousel-indicator-border-radius);
+    background: var(--carousel-indicator-bg);
+    cursor: pointer;
+    transition: var(--carousel-indicator-transition);
+
+    &.active {
+        background: var(--carousel-indicator-active-bg);
+    }
+
+    &:is(:hover, :focus) {
+        background: var(--carousel-indicator-hover-bg);
+        outline: var(--carousel-outline-width) solid var(--carousel-outline-color);
+        outline-offset: var(--carousel-outline-offset);
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --carousel-controls-padding: 0.625rem 0.9375rem;
+        --carousel-controls-font-size: 1rem;
+    }
+}
 </style>
