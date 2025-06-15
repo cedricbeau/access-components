@@ -91,6 +91,41 @@
 <script>
   import { defineComponent } from "@utils/utils.js";
 
+/**
+ * A reusable confirmation dialog component for handling user confirmations.
+ *
+ * @component ConfirmationDialog
+ *
+ * @property {boolean} isOpen - Controls the visibility of the dialog
+ * @property {string} title - The title text of the dialog
+ * @property {string} message - The main message/content of the dialog
+ * @property {string} iconType - The type of icon to display (defaults to "warning")
+ * @property {string} dialogId - Unique ID for the dialog, auto-generated
+ * @property {Function|null} resolvePromise - Promise resolver for handling dialog results
+ * @property {Element|null} previousFocus - Stores the previously focused element
+ *
+ * @method open - Opens the dialog and returns a Promise
+ * @param {string} title - The title to display
+ * @param {string} message - The message to display
+ * @param {string} [iconType="warning"] - The type of icon to show
+ * @returns {Promise} Resolves with boolean (true for confirm, false for cancel)
+ *
+ * @method confirm - Resolves the dialog with true
+ * @method cancel - Resolves the dialog with false
+ * @method close - Closes the dialog and resolves the promise
+ * @param {boolean} result - The result to resolve the promise with
+ *
+ * @example
+ * const dialog = document.querySelector('[x-data="confirmationDialog"]');
+ * const result = await dialog.open(
+ *   "Confirm Delete",
+ *   "Are you sure you want to delete this item?",
+ *   "warning"
+ * );
+ * if (result) {
+ *   // User confirmed
+ * }
+ */
   defineComponent("confirmationDialog", () => {
     return {
       isOpen: false,

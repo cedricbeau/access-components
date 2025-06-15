@@ -100,6 +100,33 @@
 
 <script>
   import { defineComponent } from "@utils/utils.js";
+/**
+ * Banner Component
+ * A dynamic banner management system that handles the display and removal of notification banners.
+ *
+ * @component
+ *
+ * @method showBanner
+ * @param {string} type - The type of banner (e.g., 'success', 'error', 'warning', 'info')
+ * @param {string} title - The title text of the banner
+ * @param {string} message - The main message content of the banner
+ * @param {boolean} [persistent=false] - If true, the banner will not auto-hide after 10 seconds
+ * @returns {number} The unique ID of the created banner
+ *
+ * @method hideBanner
+ * @param {number} id - The unique ID of the banner to hide
+ *
+ * @method hideAllBanners
+ * Hides all currently visible banners
+ *
+ * @property {Array} banners - Array storing all active banner objects
+ * @property {number} nextId - Counter for generating unique banner IDs
+ *
+ * @example
+ * const bannerId = $banner.showBanner('success', 'Success!', 'Operation completed.');
+ * $banner.hideBanner(bannerId);
+ * $banner.hideAllBanners();
+ */
   defineComponent("banner", () => {
     return {
       banners: [],
