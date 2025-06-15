@@ -2,7 +2,6 @@
 
 ---
 
-<!-- Accordion Component -->
 <section class="component-section">
   <h3>Accordion</h3>
   <div x-data="accordion()" class="accordion">
@@ -80,6 +79,23 @@
 <script>
   import { defineComponent } from "@utils/utils.js";
 
+  /**
+   * Accordion component functionality handler
+   *
+   * This component defines the behavior for an accordion interface:
+   * - Manages the state of accordion items through an array of open indices
+   * - Provides methods to toggle and check the state of accordion items
+   *
+   * @function defineComponent
+   * @param {string} "accordion" - Component name identifier
+   * @returns {Object} Component configuration object with the following:
+   *   @property {Array} openItems - Stores indices of currently open accordion items
+   *   @property {Function} toggle - Toggles the open/closed state of an accordion item
+   *     @param {number} index - The index of the accordion item to toggle
+   *   @property {Function} isOpen - Checks if a specific accordion item is open
+   *     @param {number} index - The index of the accordion item to check
+   *     @returns {boolean} True if item is open, false otherwise
+   */
   defineComponent("accordion", () => {
     return {
       openItems: [],
@@ -100,48 +116,69 @@
 </script>
 
 <style>
-  /* Accordion Styles */
+  :root {
+    --accordion-border-color: #ddd;
+    --accordion-border-width: 1px;
+    --accordion-border-radius: 0.25rem;
+
+    --accordion-header-width: 100%;
+    --accordion-header-bg: #f8f9fa;
+    --accordion-header-text-align: left;
+    --accordion-header-hover-bg: #e9ecef;
+    --accordion-header-focus-outline: #007acc;
+    --accordion-header-focus-width: 0.125rem;
+
+    --accordion-content-bg: white;
+
+    --accordion-padding: 1rem;
+
+    --accordion-transition-duration: 0.3s;
+
+    --accordion-icon-rotated: rotate(180deg);
+  }
+
   .accordion {
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: var(--accordion-border-width) solid var(--accordion-border-color);
+    border-radius: var(--accordion-border-radius);
   }
 
   .accordion-item {
-    border-bottom: 1px solid #ddd;
-  }
+    border-bottom: var(--accordion-border-width) solid
+      var(--accordion-border-color);
 
-  .accordion-item:last-child {
-    border-bottom: none;
+    &:last-child {
+      border-bottom: none;
+    }
   }
 
   .accordion-header {
-    width: 100%;
-    background: #f8f9fa;
-    border: none;
-    padding: 1rem;
-    text-align: left;
-    cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
+    width: var(--accordion-header-width);
+    background: var(--accordion-header-bg);
+    border: none;
+    padding: var(--accordion-padding);
+    text-align: var(--accordion-header-text-align);
+    cursor: pointer;
 
-  .accordion-header:hover,
-  .accordion-header:focus {
-    background: #e9ecef;
-    outline: 2px solid #007acc;
+    &:is(:hover, :focus) {
+      background: var(--accordion-header-hover-bg);
+      outline: var(--accordion-header-focus-width) solid
+        var(--accordion-header-focus-outline);
+    }
   }
 
   .accordion-content {
-    padding: 1rem;
-    background: white;
+    padding: var(--accordion-padding);
+    background: var(--accordion-content-bg);
   }
 
   .accordion-icon {
-    transition: transform 0.3s;
-  }
+    transition: transform var(--accordion-transition-duration);
 
-  .accordion-icon.rotated {
-    transform: rotate(180deg);
+    &.rotated {
+      transform: var(--accordion-icon-rotated);
+    }
   }
 </style>
