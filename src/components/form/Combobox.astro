@@ -2,7 +2,6 @@
 
 ---
 
-<!-- Combobox/Autocomplete Component -->
 <section class="component-section">
   <h3>Combobox/Autocomplete</h3>
 
@@ -76,6 +75,34 @@
 <script>
   import { defineComponent } from "@utils/utils.js";
 
+  /**
+   * Defines a Combobox component with search and selection functionality
+   *
+   * @component
+   *
+   * @property {string} query - The current search query text
+   * @property {boolean} isOpen - Whether the combobox dropdown is open
+   * @property {number} activeIndex - Index of currently highlighted option (-1 if none)
+   * @property {Object|null} selectedOption - Currently selected option object
+   * @property {Array<Object>} options - Array of selectable options with id and label
+   *
+   * @property {Function} filteredOptions - Computed property that filters options based on query
+   * @property {Function} activeOptionId - Computed property that returns the id of active option
+   *
+   * @method handleInput - Handles input changes in the combobox
+   * @method handleFocus - Handles focus event to open dropdown
+   * @method handleBlur - Handles blur event to close dropdown with delay
+   * @method handleKeydown - Handles keyboard navigation (arrows, enter, escape, tab)
+   * @method selectOption - Selects an option and updates component state
+   * @method setActiveIndex - Updates the currently active option index
+   *
+   * Keyboard interactions:
+   * - ArrowDown: Move to next option
+   * - ArrowUp: Move to previous option
+   * - Enter: Select highlighted option
+   * - Escape: Close dropdown
+   * - Tab: Close dropdown
+   */
   defineComponent("combobox", () => {
     return {
       query: "",
@@ -176,81 +203,128 @@
 </script>
 
 <style>
-  /* Combobox Styles */
+  :root {
+    /* .combobox-container */
+    --combobox-container-width: 100%;
+    --combobox-container-max-width: 18.75rem;
+
+    /* .combobox-input */
+    --combobox-input-width: 100%;
+    --combobox-input-padding: 0.75rem;
+    --combobox-input-border: 0.125rem solid #d1d5db;
+    --combobox-input-radius: 0.375rem;
+    --combobox-input-font-size: 1rem;
+    --combobox-input-border-focus: #2563eb;
+    --combobox-input-shadow-focus: 0 0 0 0.1875rem rgba(37, 99, 235, 0.1);
+    --combobox-input-transition: border-color 0.2s, box-shadow 0.2s;
+
+    /* .combobox-listbox */
+    --combobox-listbox-top: 100%;
+    --combobox-listbox-left: 0;
+    --combobox-listbox-right: 0;
+    --combobox-listbox-border-top: none;
+    --combobox-listbox-overflow-y: auto;
+    --combobox-listbox-bg: #ffffff;
+    --combobox-listbox-border: 0.125rem solid #d1d5db;
+    --combobox-listbox-radius: 0 0 0.375rem 0.375rem;
+    --combobox-listbox-max-height: 12.5rem;
+    --combobox-listbox-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
+    --combobox-listbox-z-index: 10;
+
+    /* .combobox-option */
+    --combobox-option-padding: 0.75rem;
+    --combobox-option-border-bottom: 0.0625rem solid #f3f4f6;
+    --combobox-option-hover-bg: #eff6ff;
+    --combobox-option-outline: 0.125rem solid #2563eb;
+    --combobox-option-outline-offset: -0.125rem;
+    --combobox-option-transition: background-color 0.2s;
+
+    /* .form-group */
+    --form-group-margin-bottom: 1.5rem;
+
+    /* .form-label */
+    --form-label-margin-bottom: 0.5rem;
+    --form-label-font-weight: 600;
+    --form-label-color: #374151;
+
+    /* .instructions */
+    --instructions-margin-top: 0.5rem;
+    --instructions-font-size: 0.875rem;
+    --instructions-color: #6b7280;
+  }
+
   .combobox-container {
     position: relative;
-    width: 100%;
-    max-width: 300px;
+    width: var(--combobox-container-width);
+    max-width: var(--combobox-container-max-width);
   }
 
   .combobox-input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 2px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 1rem;
-    transition:
-      border-color 0.2s,
-      box-shadow 0.2s;
-  }
+    width: var(--combobox-input-width);
+    padding: var(--combobox-input-padding);
+    border: var(--combobox-input-border);
+    border-radius: var(--combobox-input-radius);
+    font-size: var(--combobox-input-font-size);
+    transition: var(--combobox-input-transition);
 
-  .combobox-input:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    &:focus {
+      outline: none;
+      border-color: var(--combobox-input-border-focus);
+      box-shadow: var(--combobox-input-shadow-focus);
+    }
   }
 
   .combobox-listbox {
     position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border: 2px solid #d1d5db;
-    border-top: none;
-    border-radius: 0 0 6px 6px;
-    max-height: 200px;
-    overflow-y: auto;
-    z-index: 10;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    top: var(--combobox-listbox-top);
+    left: var(--combobox-listbox-left);
+    right: var(--combobox-listbox-right);
+    background: var(--combobox-listbox-bg);
+    border: var(--combobox-listbox-border);
+    border-top: var(--combobox-listbox-border-top);
+    border-radius: var(--combobox-listbox-radius);
+    max-height: var(--combobox-listbox-max-height);
+    overflow-y: var(--combobox-listbox-overflow-y);
+    z-index: var(--combobox-listbox-z-index);
+    box-shadow: var(--combobox-listbox-shadow);
   }
 
   .combobox-option {
-    padding: 0.75rem;
+    padding: var(--combobox-option-padding);
     cursor: pointer;
-    border-bottom: 1px solid #f3f4f6;
-    transition: background-color 0.2s;
-  }
+    border-bottom: var(--combobox-option-border-bottom);
+    transition: var(--combobox-option-transition);
 
-  .combobox-option:last-child {
-    border-bottom: none;
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:focus {
+      outline: var(--combobox-option-outline);
+      outline-offset: var(--combobox-option-outline-offset);
+      background-color: var(--combobox-option-hover-bg);
+    }
   }
 
   .combobox-option:hover,
   .combobox-option[aria-selected="true"] {
-    background-color: #eff6ff;
-  }
-
-  .combobox-option:focus {
-    outline: 2px solid #2563eb;
-    outline-offset: -2px;
-    background-color: #eff6ff;
+    background-color: var(--combobox-option-hover-bg);
   }
 
   .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--form-group-margin-bottom);
   }
 
   .form-label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: #374151;
+    margin-bottom: var(--form-label-margin-bottom);
+    font-weight: var(--form-label-font-weight);
+    color: var(--form-label-color);
   }
 
   .instructions {
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-    color: #6b7280;
+    margin-top: var(--instructions-margin-top);
+    font-size: var(--instructions-font-size);
+    color: var(--instructions-color);
   }
 </style>
